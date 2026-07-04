@@ -1,0 +1,6 @@
+interface:
+  display_name: "涂鸦卡片"
+  short_description: "xingchen 标签下的涂鸦卡片 Skill，只用 image_gen.text2im 单次生成涂鸦插画卡片。"
+  default_prompt: "Use $xingchen-doodle-card-skill with Execution Lock and Single Image Gen Authority. Generate a complete prompt, directly call image_gen.text2im when available, and do no post-processing. Enforce exact native 3:4 aspect ratio for every page; 2:3, 4:5, 9:16, square, A4, and long poster formats are failures, not minor deviations. Generate and verify page by page. Never use fallback renderer, PIL, Canvas, SVG, HTML/CSS text rendering, local deterministic Chinese layout, separated illustration/text pipeline, post-processing typography layers, or bypass image_gen to fix Chinese text."
+policy:
+  allow_implicit_invocation: true

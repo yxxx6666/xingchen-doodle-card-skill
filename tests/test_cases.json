@@ -1,0 +1,186 @@
+[
+  {
+    "input": "无效补课的根源，不在学得少，而在基础断裂。",
+    "expected_title": "无效补课的根源",
+    "expected_subtitle": "问题不在学得少，而在基础断裂",
+    "expected_points": [
+      "先补结构",
+      "再谈速度"
+    ],
+    "must_include": [
+      "image_gen.text2im",
+      "Execution Lock",
+      "Single Image Gen Authority",
+      "Title:",
+      "Subtitle:",
+      "Optional points",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "fallback renderer",
+      "PIL/Canvas/SVG/HTML rendering",
+      "multi-stage composition pipeline",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "时间管理不是把一天塞满，而是给重要的事情留出空间。",
+    "expected_title": "时间要有呼吸感",
+    "expected_subtitle": "不是塞满一天，而是留出空间",
+    "expected_points": [
+      "少一点拥挤",
+      "多一点重点"
+    ],
+    "must_include": [
+      "vertical 3:4 composition",
+      "large empty space reserved for text",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "local deterministic Chinese layout",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "AI焦虑不是工具太少，而是问题还不清楚。",
+    "expected_title": "AI焦虑的根源",
+    "expected_subtitle": "不是工具太少，是问题还不清楚",
+    "expected_points": [
+      "先定义问题",
+      "再选择工具"
+    ],
+    "must_include": [
+      "Chinese text integrated into image",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "bypassing image_gen",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "睡前刷手机让大脑继续兴奋，所以越刷越睡不着。",
+    "expected_title": "睡前手机偷走睡意",
+    "expected_subtitle": "大脑还在兴奋，睡意就被推远",
+    "expected_points": [
+      "放下屏幕",
+      "留给睡眠"
+    ],
+    "must_include": [
+      "Mood: calm, warm, educational, reflective",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "external text rendering",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "情绪不好时先整理房间，是为了找回一点掌控感。",
+    "expected_title": "先整理一点点",
+    "expected_subtitle": "不是立刻变好，是找回掌控感",
+    "expected_points": [
+      "从桌面开始",
+      "慢慢恢复"
+    ],
+    "must_include": [
+      "A hand-drawn doodle editorial illustration",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "post-processing typography layers",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "读书不是逃避社交，而是给自己一点安静输入。",
+    "expected_title": "独处不是逃避",
+    "expected_subtitle": "安静输入，也是在给自己充电",
+    "expected_points": [
+      "慢慢读",
+      "慢慢想"
+    ],
+    "must_include": [
+      "imperfect sketch lines",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "CSS text systems",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "下雨天慢一点，不代表低效，而是在照顾自己的能量。",
+    "expected_title": "雨天慢一点",
+    "expected_subtitle": "不是低效，是照顾自己的能量",
+    "expected_points": [
+      "慢一点走",
+      "稳一点过"
+    ],
+    "must_include": [
+      "editorial magazine layout feel",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "separated illustration/text pipeline",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  },
+  {
+    "input": "长期认真做小事，比偶尔爆发更可靠。",
+    "expected_title": "小事更可靠",
+    "expected_subtitle": "稳定重复，胜过偶尔爆发",
+    "expected_points": [
+      "每天一点",
+      "长期有效"
+    ],
+    "must_include": [
+      "soft pastel accents",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440",
+      "2:3",
+      "4:5",
+      "9:16"
+    ],
+    "must_avoid": [
+      "post typography overlay",
+      "wrong ratio accepted",
+      "minor deviation"
+    ]
+  }
+]
