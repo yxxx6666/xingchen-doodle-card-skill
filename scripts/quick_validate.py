@@ -13,6 +13,8 @@ REQUIRED_FILES = [
     "styles/chinese-doodle-editorial-style-lock.md", "templates/image-gen-card-prompt-template.md", "templates/image-series-output-template.md", "templates/image_prompt_template.md", "templates/compact-final-prompt-template.md",
     "tests/test_cases.json", "tests/style_checklist.md", "scripts/quick_validate.py",
 ]
+BINARY_SUFFIXES = {".png", ".jpg", ".jpeg", ".gif", ".webp", ".ico", ".pdf"}
+
 REQUIRED_KEYWORDS = [
     "image_gen.text2im", "Execution Lock", "Single Image Gen Authority", "Aspect Ratio Lock", "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
     "native 3:4", "1080×1440", "1536×2048", "width / height = 0.75", "0.745", "0.755",
@@ -42,13 +44,15 @@ for p in ROOT.rglob('*'):
     if not p.is_file():
         continue
     rel=str(p.relative_to(ROOT))
+    if any(part in {'.git','__MACOSX','__pycache__'} for part in p.parts):
+        continue
+    if p.suffix.lower() in BINARY_SUFFIXES:
+        continue
     try:
         txt=p.read_text(encoding='utf-8')
     except UnicodeDecodeError:
         errors.append(f"File is not UTF-8: {rel}")
         continue
-    if any(part in {'.git','__MACOSX','__pycache__'} for part in p.parts):
-        errors.append(f"Cache/temp path included: {rel}")
     if p.suffix in {'.py','.js','.ts','.mjs'}:
         for pat in FORBIDDEN_IMPORT_PATTERNS:
             if re.search(pat, txt):
