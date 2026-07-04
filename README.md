@@ -2,8 +2,6 @@
 
 一个把中文内容一次生成成 3:4 手绘涂鸦小红书卡片的 Codex Skill。
 
-![涂鸦卡片封面示例](docs/images/example-cover.png)
-
 ## 一句话介绍
 
 `xingchen-doodle-card-skill` 用于把中文主题、观点、笔记或生活观察，直接交给 `image_gen.text2im` 一次生成完整的手绘涂鸦编辑卡片。
