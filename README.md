@@ -9,7 +9,7 @@ Version: v0.6.2
 
 Execution Lock + Single Image Gen Authority.
 
-The only goal is to use `image_gen.text2im` to generate a complete Chinese hand-drawn doodle editorial illustration card in one pass.
+The only goal is to use `image_gen.text2im` to generate a complete hand-drawn doodle editorial illustration card in one pass.
 
 The image must include illustration character, scene, mood, composition, Chinese title, and Chinese body text.
 
