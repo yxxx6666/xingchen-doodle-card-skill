@@ -1,20 +1,35 @@
 # Version
 
-Current version: **v0.4.2**
+Current version: **v0.6.2**
 
 Skill name: `xingchen-doodle-card-skill`
 
-Release type: Execution Lock + Single Image Gen Authority patch
+Release type: Production-grade Observable AI Visual Compilation Pipeline
 
-Release date: 2026-07-02
+Release date: 2026-07-05
 
 ## Version scope
 
-v0.4.2 strengthens v0.4.0 with an explicit Execution Lock and Single Image Gen Authority. It makes `image_gen.text2im` the only legal renderer and prohibits fallback renderer, local text rendering, separated illustration/text pipelines, post-processing typography layers, and bypassing image_gen to fix Chinese text.
+v0.6.2 upgrades v0.6.1 into a production-grade deterministic AI pipeline.
+
+This is not a style expansion. It adds runtime simulation, encoding safety, and execution traceability.
+
+The only legal rendering path remains `image_gen.text2im`.
 
 Display name: **涂鸦卡片**
 Owner tag: **xingchen**
 
-## v0.4.2 scope
+## Core principle
 
-Adds Aspect Ratio Lock + Page-by-Page Verification. Every image must be native 3:4. 2:3, 4:5, 9:16, square, A4, and long poster outputs are failed outputs.
+结构正确性 > 可读性 > 美观 > 丰富度
+
+## Final production chain
+
+```text
+encoding safety before pipeline
+simulation before generation
+execution trace after generation
+scorer controls execution
+controller is single source of truth
+image_gen only allowed if ALL checks pass
+```

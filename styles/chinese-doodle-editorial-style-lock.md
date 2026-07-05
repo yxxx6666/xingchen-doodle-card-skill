@@ -167,3 +167,25 @@ No 2:3. No 4:5. No 9:16. No square. No A4. No long poster.
 ```
 
 Do not rewrite the content, change the scene, or change the style during ratio-only retry.
+
+## v0.5.0 Structure Stability Repair
+
+This is not a feature expansion. It strengthens structure safety for image_gen doodle card prompts.
+
+New priority system:
+
+```text
+结构正确性 > 可读性 > 美观 > 丰富度
+```
+
+New pipeline layers:
+
+1. anatomy constraints layer
+2. scene complexity limiter
+3. pose safety layer
+4. prompt repair loop
+5. mandatory STRUCTURE SAFETY BLOCK in final prompts
+
+Core goal: reduce three hands / three feet / disconnected limbs / hands growing from wrong places / multi-action collapse / scene overload distortion.
+
+The v0.4.2 Execution Lock remains unchanged: the only legal renderer is `image_gen.text2im`. No PIL, Canvas, SVG, HTML, fallback renderer, or post-processing typography layer is allowed.

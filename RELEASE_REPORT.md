@@ -1,47 +1,39 @@
-# RELEASE REPORT
+# RELEASE_REPORT — xingchen-doodle-card-skill v0.6.2
 
-Skill: `xingchen-doodle-card-skill`
+## Version
+v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
 
-Version: `v0.4.2`
+## Upgrade type
+System-level production hardening, not a feature expansion.
 
-Display name: `涂鸦卡片`
-
-Owner tag: `xingchen`
-
-Release date: 2026-07-02
-
-## 本版目标
-
-v0.4.2 是 **Execution Lock + Single Image Gen Authority** 修复版。
-
-目标：把 `image_gen.text2im` 明确为唯一渲染器，并禁止任何 fallback、本地画字、分离 pipeline、后处理叠字和为了修正中文而绕过 image_gen 的行为。
-
-## 本版完成项
-
-1. 新增 Execution Lock 表述。
-2. 新增 Single Image Gen Authority 表述。
-3. 更新唯一标准 prompt 模板。
-4. 强化 forbidden 行为：PIL / Canvas / SVG / HTML / CSS、fallback renderer、multi-stage composition pipeline、post-processing typography layers。
-5. 更新 quick_validate.py 校验 v0.4.2 关键字段。
-
-## Validation results
+## From → To
 
 ```text
-Validation passed for xingchen-doodle-card-skill v0.4.2
+controlled compiler → production-grade deterministic AI pipeline
 ```
 
-## ZIP metadata
+## What v0.6.2 adds
 
-- File: `xingchen-doodle-card-skill-v0.4.2.zip`
-- Size: recorded in final delivery message and Notion version record after packaging
-- SHA256: recorded in final delivery message and Notion version record after packaging
+- runtime simulation system via `core/runtime_simulator.md`
+- encoding guard system via `core/encoding_guard.md`
+- execution trace system via `core/execution_trace.md`
+- full orchestration controller
+- pre-execution validation stage
+- simulation-first execution model
+- white-box traceability
 
-## v0.4.2 Aspect Ratio Lock
+## Hidden failure reduction
 
-- Every output must be native 3:4.
-- 2:3 / 4:5 / 9:16 are failed outputs.
-- Every final prompt starts with STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.
-- Page-by-page verification is required before continuing the carousel.
-- Ratio-only retry must preserve content, scene, style, and Chinese text, changing only canvas ratio.
+The system reduces hidden failure cases by simulating before generation, blocking unsafe prompts before image_gen, checking UTF-8 integrity before pipeline execution, and recording the complete trace after each run.
 
-Validation result will be recorded after packaging.
+## What remains unchanged
+
+- Execution Lock remains active.
+- `image_gen.text2im` remains the only legal rendering path.
+- No new rendering system is introduced.
+- 3:4 card output remains active.
+- Chinese doodle illustration positioning remains unchanged.
+- Single-image generation mode remains active.
+
+## Validation result
+`python scripts/quick_validate.py` passed in source directory and after ZIP reverse-check.

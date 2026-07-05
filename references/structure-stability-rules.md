@@ -1,98 +1,40 @@
-# Compact Prompt Template v0.4.2
+# Structure Stability Rules v0.5.0
 
-Use only when the prompt must be shorter. It still must use `image_gen.text2im`.
+This release is a structure stability repair version, not a feature expansion.
 
-## Execution Lock + Single Image Gen Authority
-
-Only `image_gen.text2im` is allowed. No fallback renderer. No local text rendering. No post-processing typography layers. No multi-stage composition pipeline.
+Priority:
 
 ```text
-A hand-drawn doodle editorial illustration. Scene: {主题}. Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space. Composition: vertical 3:4, subject placed bottom-left or side, with large empty space reserved for text.
-
-Chinese text integrated into image:
-Title: "{标题}"
-Subtitle: "{副标题}"
-Optional points:
-- {要点1}
-- {要点2}
-
-Mood: calm, warm, educational, reflective.
-Avoid: any external text rendering, post-processing typography layers, PIL/Canvas/SVG/HTML rendering, CSS text systems, multi-stage composition pipeline, fallback renderer.
+结构正确性 > 可读性 > 美观 > 丰富度
 ```
 
+The image may become simpler if needed. Simpler is correct. Rich but anatomically broken is failed.
 
-## v0.4.2 Canonical 3:4 Prompt
+Required layers:
 
-```text
-STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.
-Create one complete image on a native 3:4 vertical canvas.
-Target canvas: 1080×1440 Xiaohongshu-style card, or any exact 3:4 equivalent.
-Do not use 2:3, 4:5, 9:16, square, A4, landscape, or long poster format.
+- anatomy constraints layer
+- scene complexity limiter
+- pose safety layer
+- prompt repair loop
+- STRUCTURE SAFETY BLOCK in every final prompt
 
-A hand-drawn doodle editorial illustration.
-
-Scene: {主题}
-Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space.
-
-Composition: exact 3:4 portrait card, subject placed bottom-left or side, with large empty space reserved for text.
-
-Chinese text integrated into image:
-Title: "{标题}"
-Subtitle: "{副标题}"
-Optional points:
-- {要点1}
-- {要点2}
-
-Mood: calm, warm, educational, reflective.
-
-Avoid:
-- 2:3 aspect ratio
-- 4:5 aspect ratio
-- 9:16 aspect ratio
-- square image
-- A4 page
-- long poster format
-- any external text rendering
-- post-processing typography layers
-- PIL/Canvas/SVG/HTML rendering
-- CSS text systems
-- multi-stage composition pipeline
-- fallback renderer
-```
-
-
-## Aspect Ratio Lock
-
-Every image must be exact native 3:4. 2:3, 4:5, 9:16, square, A4, and long poster formats are failed outputs, not minor deviations.
-
-
-## Aspect Ratio Verification Details
-
-Page-by-page verification is required.
-
-```text
-width / height = 0.75
-allowed tolerance = 0.745 to 0.755
-high-resolution equivalent = 1536×2048
-```
-
-A 2:3 output is not a minor deviation. It is failed output.
-
-## v0.5.0 STRUCTURE SAFETY BLOCK（必须自动插入）
+## 🔴 STRUCTURE SAFETY BLOCK（必须自动插入）
 
 ```text
 STRUCTURE SAFETY BLOCK:
-- Structure priority: structure correctness > readability > beauty > richness.
-- One main character only by default.
-- Exactly two hands and exactly two feet.
-- All limbs clearly connected to the body.
-- No third hand, no hidden hand, no hand emerging from desk/clothes/wall/bag/background.
-- One simple main action only.
-- Each hand has at most one clear action target.
-- At most 1–2 interaction objects; extra objects become background props.
-- Prefer seated pose, side-standing pose, slight hand extension, or static action.
-- Avoid twisted body, crossed arms, multi-direction action, high dynamic pose, running, jumping.
-- Do not use occlusion to hide anatomy errors; simplify instead.
+- Structure priority: 结构正确性 > 可读性 > 美观 > 丰富度.
+- Use one main character / 每个画面默认仅 1 个主角色.
+- The character must have 2只手 / exactly two hands.
+- The character must have 2只脚 / exactly two feet.
+- all limbs clearly connected / 所有肢体必须明确连接身体.
+- No 第三只手, no 隐藏手, no 从桌子/衣服/墙里伸出的手.
+- 一个角色只能有一个主动作 / one simple main action only.
+- 每个角色最多交互 1~2 个物体; extra objects become background props.
+- scene complexity limiter: 单画面最多 1 个主场景; 静态物体最多 6~12 个; 信息 > 5 个要点必须视觉分组或拆卡片.
+- pose safety: prefer 坐姿, 站立侧身, 轻微伸手, 静态动作.
+- Avoid 大幅扭转身体, 双臂交叉复杂动作, 多方向同时动作, 高动态姿态.
+- prompt repair loop: 删除非必要物体 → 降低动作复杂度 → 将双手动作改为单手 → 改为坐姿/静态姿态 → 减少场景元素 → 强制重新生成 prompt.
+- Do not use occlusion to hide anatomy errors; 宁可简化，不可错误.
 ```
 
 ## v0.6.0 — Structure-aware Compilation System

@@ -26,6 +26,25 @@
       "multi-stage composition pipeline",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "single_scene_editorial",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -49,6 +68,25 @@
       "local deterministic Chinese layout",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "title_scene_bullets",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -71,6 +109,25 @@
       "bypassing image_gen",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "single_scene_editorial",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -93,6 +150,25 @@
       "external text rendering",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "title_scene_bullets",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -115,6 +191,25 @@
       "post-processing typography layers",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "single_scene_editorial",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -137,6 +232,25 @@
       "CSS text systems",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "list_scene_hybrid",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -159,6 +273,25 @@
       "separated illustration/text pipeline",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "title_scene_bullets",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   },
   {
@@ -181,6 +314,77 @@
       "post typography overlay",
       "wrong ratio accepted",
       "minor deviation"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [],
+    "repair_strategy_expected": "Level 1 if WARNING; Level 2/3 if FAIL",
+    "expected_layout_type": "title_scene_bullets",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
+    ]
+  },
+  {
+    "id": "v060_regression_9",
+    "title": "结构稳定性回归测试",
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "multi-action",
+      "scene overload"
+    ],
+    "repair_strategy_expected": "reduce props, single action, safe pose",
+    "expected_layout_type": "title_object_ring",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
+    ]
+  },
+  {
+    "id": "v060_regression_10",
+    "title": "结构稳定性回归测试",
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "multi-action",
+      "scene overload"
+    ],
+    "repair_strategy_expected": "reduce props, single action, safe pose",
+    "expected_layout_type": "title_object_ring",
+    "execution_gate_expected": "image_gen only allowed under SAFE state",
+    "runtime_simulation_expected": "simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state"
     ]
   }
 ]

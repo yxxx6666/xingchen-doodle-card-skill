@@ -1,199 +1,335 @@
 # 涂鸦卡片
 
-一个把中文内容一次生成成 3:4 手绘涂鸦小红书卡片的 Codex Skill。
+Owner tag: `xingchen`
+Skill ID: `xingchen-doodle-card-skill`
 
-## 一句话介绍
+Version: v0.6.2
 
-`xingchen-doodle-card-skill` 用于把中文主题、观点、笔记或生活观察，直接交给 `image_gen.text2im` 一次生成完整的手绘涂鸦编辑卡片。
+## Positioning
 
-## 示例效果
+Execution Lock + Single Image Gen Authority.
 
-| 封面卡片 | 内容页卡片 |
-| --- | --- |
-| ![一个人吃饭封面示例](docs/images/example-cover.png) | ![一个人吃饭内容页示例](docs/images/example-page.png) |
+The only goal is to use `image_gen.text2im` to generate a complete Chinese hand-drawn doodle editorial illustration card in one pass.
 
-示例图展示了这个 Skill 的目标气质：柔和纸感、手写中文、生活化场景、插画与文字同画面生成，而不是后期排版叠字。
+The image must include illustration character, scene, mood, composition, Chinese title, and Chinese body text.
 
-## 这是什么
+## Only legal path
 
-这是一个面向 Codex 的图像生成 Skill，专门约束“中文手绘涂鸦卡片”的提示词、画幅、风格、禁止事项和验收标准。
+1. Generate complete prompt.
+2. Directly call `image_gen.text2im`.
+3. No post-processing.
 
-它的核心原则很明确：
+## Prohibited
 
-- 只使用 `image_gen.text2im`。
-- 插画、中文标题、正文短句、场景和构图必须在同一张图里一次生成。
-- 不使用 PIL、Canvas、SVG、HTML/CSS 或任何本地文字渲染。
-- 不做“先生成插画，再后期叠中文”的分离式流程。
-- 所有成图必须是原生 3:4 竖版画幅。
+- PIL / Canvas / SVG / HTML / CSS text rendering.
+- local deterministic Chinese layout.
+- illustration generation + text overlay.
+- separated illustration/text pipeline.
+- fallback renderer.
+- bypassing image_gen to fix Chinese text.
 
-## 适合谁
-
-- 想把小红书内容做成手绘卡片的创作者。
-- 想把生活观察、学习笔记、方法论、情绪整理做成视觉图文的人。
-- 需要稳定复用同一类“中文手写涂鸦卡片风格”的 Codex 用户。
-- 不想手动写复杂 prompt，但希望输出统一、可控、有审美边界的人。
-
-## 能产出什么
-
-- 小红书 3:4 封面图。
-- 连续多页图文卡片。
-- 中文手写感标题卡。
-- 生活方式、学习、成长、思考类手绘插画。
-- 含标题、副标题、要点文字和场景插画的一体化图片。
-
-## 视觉风格
-
-- 手绘涂鸦插画。
-- 简洁墨线和略不完美的草稿线。
-- 柔和低饱和色彩。
-- 大面积留白。
-- 纸张纹理与温暖生活感。
-- 杂志式图文构图。
-- 中文文字直接融入画面。
-
-## 快速开始
-
-在 Codex 中直接这样描述你的需求：
-
-```text
-使用 xingchen-doodle-card-skill，帮我生成一张 3:4 小红书手绘卡片。
-主题：一个人吃饭，也要好好照顾自己
-标题：一个人吃饭，也是一种生活秩序
-副标题：别让外卖偷走你的长期凑合
-要点：
-- 一顿热饭
-- 一个干净碗
-- 一点小秩序
-```
-
-Skill 会把内容组织成完整的 `image_gen.text2im` prompt，并要求一次生成完整图片。
-
-## 使用方法（安装）
-
-### 从 GitHub 安装
-
-```powershell
-git clone https://github.com/yxxx6666/xingchen-doodle-card-skill.git
-Copy-Item -LiteralPath ".\xingchen-doodle-card-skill" -Destination "$env:USERPROFILE\.codex\skills\xingchen-doodle-card-skill" -Recurse -Force
-```
-
-安装后重启 Codex，或开启一个新线程，让 Skill 列表重新加载。
-
-### 本地已有目录
-
-如果你已经有这个目录，可以确认主文件存在：
-
-```powershell
-Test-Path "$env:USERPROFILE\.codex\skills\xingchen-doodle-card-skill\SKILL.md"
-```
-
-返回 `True` 即表示 Skill 文件在预期位置。
-
-## 工作流程
-
-1. 读取用户给出的中文主题、标题、正文和要点。
-2. 判断适合的生活场景、主体、情绪和构图。
-3. 生成完整的 `image_gen.text2im` prompt。
-4. 明确要求原生 3:4 竖版画幅。
-5. 直接调用 image generation 一次生成完整图片。
-6. 检查画幅、中文是否在画面中、风格是否统一。
-7. 如果比例失败，只重试比例，不改写主题和文字。
-
-## 目录结构
-
-```text
-xingchen-doodle-card-skill/
-├── SKILL.md
-├── README.md
-├── VERSION.md
-├── CHANGELOG.md
-├── RELEASE_REPORT.md
-├── agents/
-├── docs/
-│   └── images/
-├── examples/
-├── references/
-├── scripts/
-├── styles/
-├── templates/
-└── tests/
-```
-
-重点目录：
-
-- `SKILL.md`：Skill 主说明和执行规则。
-- `templates/`：提示词与输出格式模板。
-- `references/`：比例、中文文字、失败模式、验证规则等细则。
-- `styles/`：视觉风格锁定规则。
-- `examples/`：示例输入。
-- `tests/`：检查清单与测试用例。
-- `docs/images/`：README 展示用示例图。
-
-## 设计目标
-
-这个 Skill 的目标不是追求无限自由，而是让一种明确的内容形态稳定出现：
-
-- 中文内容优先。
-- 画面完整，不拆分生产。
-- 风格统一，而不是每次随机漂移。
-- 3:4 竖版输出稳定。
-- 保持手绘、有温度、适合小红书阅读。
-- 让用户专注表达内容，而不是反复调 prompt。
-
-## 执行锁与比例锁
-
-本 Skill 使用 `Execution Lock`、`Single Image Gen Authority` 和 `Aspect Ratio Lock`。这些不是风格建议，而是执行与验收规则。
-
-比例要求：
+## Standard prompt
 
 ```text
 STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.
-native 3:4
-1080×1440
-1536×2048
-width / height = 0.75
-pass range = 0.745 to 0.755
+Create one complete image on a native 3:4 vertical canvas.
+Target canvas: 1080×1440 Xiaohongshu-style card, or any exact 3:4 equivalent.
+Do not use 2:3, 4:5, 9:16, square, A4, landscape, or long poster format.
+
+A hand-drawn doodle editorial illustration.
+
+Scene: {主题}
+Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space.
+
+Composition: exact 3:4 portrait card, subject placed bottom-left or side, with large empty space reserved for text.
+
+Chinese text integrated into image:
+Title: "{标题}"
+Subtitle: "{副标题}"
+Optional points:
+- {要点1}
+- {要点2}
+
+Mood: calm, warm, educational, reflective.
+
+Avoid:
+- 2:3 aspect ratio
+- 4:5 aspect ratio
+- 9:16 aspect ratio
+- square image
+- A4 page
+- long poster format
+- any external text rendering
+- post-processing typography layers
+- PIL/Canvas/SVG/HTML rendering
+- CSS text systems
+- multi-stage composition pipeline
+- fallback renderer
 ```
 
-错误画幅：
 
-- `2:3`
-- `4:5`
-- `9:16`
-- `A4`
-- `long poster`
+## Aspect Ratio Lock v0.5.0
+
+3:4 is not a soft prompt preference. It is a hard execution and acceptance requirement.
+
+Every generated image must be an **exact native 3:4 portrait image**.
+
+Valid target canvas:
+
+```text
+width / height = 0.75
+reference size: 1080×1440
+high-resolution equivalent: 1536×2048
+```
+
+Invalid outputs:
+
+- 2:3 portrait
+- 4:5 portrait
+- 9:16 story
+- 1:1 square
+- A4 page
+- long poster format
+- landscape format
 
 A 2:3 result is not a minor deviation. It is a failed output.
 
-Page-by-page verification：不要批量生成整组卡片后再统一检查。每一页都要先生成、检查实际比例，通过后再继续下一页。
+### Parameter priority
 
-标准 prompt 关键词：
+If `image_gen.text2im` supports aspect-ratio or size arguments, the caller must set one of these before relying on prompt text:
 
 ```text
-A hand-drawn doodle editorial illustration.
-Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space.
-Composition: exact 3:4 portrait card
-Chinese text integrated into image:
-Title:
-Subtitle:
-Optional points:
-Mood: calm, warm, educational, reflective.
+aspect_ratio: "3:4"
 ```
 
-禁止项：
+or:
 
-- `any external text rendering`
-- `post-processing typography layers`
-- `PIL/Canvas/SVG/HTML rendering`
-- `CSS text systems`
-- `multi-stage composition pipeline`
-- `fallback renderer`
+```text
+size: "1080x1440"
+```
 
-## 版本记录
+or:
 
-当前版本：`v0.4.2`
+```text
+size: "1536x2048"
+```
 
-- `v0.4.2`：加入 Aspect Ratio Lock 和逐页比例检查，要求所有图片为原生 3:4。
-- `v0.4.0`：强化 Execution Lock 与 Single Image Gen Authority，只允许 `image_gen.text2im` 一次生成。
+Prompt text alone is not enough.
 
-更多版本信息见 [VERSION.md](VERSION.md) 和 [CHANGELOG.md](CHANGELOG.md)。
+### Page-by-page verification
+
+Do not batch-generate a full carousel without checking ratio.
+
+For every page:
+
+```text
+Generate page → check actual ratio → pass before continuing
+```
+
+If the actual ratio is not 3:4, stop and regenerate that same page before moving on.
+
+### Ratio check
+
+After each generated image, check actual image dimensions when available:
+
+```text
+valid_ratio = width / height
+pass range = 0.745 to 0.755
+```
+
+If dimensions are unavailable, visually inspect the canvas. If it obviously looks like 2:3, 4:5, 9:16, square, A4, or long poster, mark it failed.
+
+### Ratio-only retry prompt
+
+When ratio fails, keep the same content and only fix the canvas:
+
+```text
+Regenerate the same page as an exact native 3:4 portrait image.
+Keep the same content, same scene, same style, and same Chinese text.
+Only correct the canvas ratio.
+No 2:3. No 4:5. No 9:16. No square. No A4. No long poster.
+```
+
+Do not rewrite the content, change the scene, or change the style during ratio-only retry.
+
+## v0.5.0 Structure Stability Repair
+
+This is not a feature expansion. It strengthens structure safety for image_gen doodle card prompts.
+
+New priority system:
+
+```text
+结构正确性 > 可读性 > 美观 > 丰富度
+```
+
+New pipeline layers:
+
+1. anatomy constraints layer
+2. scene complexity limiter
+3. pose safety layer
+4. prompt repair loop
+5. mandatory STRUCTURE SAFETY BLOCK in final prompts
+
+Core goal: reduce three hands / three feet / disconnected limbs / hands growing from wrong places / multi-action collapse / scene overload distortion.
+
+The v0.5.0 Execution Lock remains unchanged: the only legal renderer is `image_gen.text2im`. No PIL, Canvas, SVG, HTML, fallback renderer, or post-processing typography layer is allowed.
+
+## 🔴 STRUCTURE SAFETY BLOCK（必须自动插入）
+
+```text
+STRUCTURE SAFETY BLOCK:
+- Structure priority: 结构正确性 > 可读性 > 美观 > 丰富度.
+- Use one main character / 每个画面默认仅 1 个主角色.
+- The character must have 2只手 / exactly two hands.
+- The character must have 2只脚 / exactly two feet.
+- all limbs clearly connected / 所有肢体必须明确连接身体.
+- No 第三只手, no 隐藏手, no 从桌子/衣服/墙里伸出的手.
+- 一个角色只能有一个主动作 / one simple main action only.
+- 每个角色最多交互 1~2 个物体; extra objects become background props.
+- scene complexity limiter: 单画面最多 1 个主场景; 静态物体最多 6~12 个; 信息 > 5 个要点必须视觉分组或拆卡片.
+- pose safety: prefer 坐姿, 站立侧身, 轻微伸手, 静态动作.
+- Avoid 大幅扭转身体, 双臂交叉复杂动作, 多方向同时动作, 高动态姿态.
+- prompt repair loop: 删除非必要物体 → 降低动作复杂度 → 将双手动作改为单手 → 改为坐姿/静态姿态 → 减少场景元素 → 强制重新生成 prompt.
+- Do not use occlusion to hide anatomy errors; 宁可简化，不可错误.
+```
+
+## v0.6.0 — Structure-aware Compilation System
+
+v0.6.0 = structure-aware compilation system.
+
+This is a system-level refactor: rule-based prompt system → compiler-based system.
+
+It is a compilation system, not a free prompt system:
+
+```text
+input
+→ content_graph_builder
+→ layout_graph_compiler
+→ anatomy_guard
+→ scene_limiter
+→ prompt_composer compiler
+→ image_gen.text2im
+→ structure_scorer
+→ repair_policy_matrix if fail
+→ regenerate
+→ max_attempts = 3
+```
+
+Why structure scoring is needed:
+
+- It gives anatomy, action, scene, and interaction risk a measurable score.
+- It prevents rich but broken scenes from passing as acceptable.
+- It triggers repair before repeated generation.
+
+Why layout graph is core:
+
+- It limits the image to one focal point.
+- It controls props, action, character, and empty space before the prompt is written.
+- It prevents every content point from becoming a drawn object.
+
+Why repair loop is needed:
+
+- It turns failures into deterministic simplification steps.
+- Level 1 compresses and removes decoration.
+- Level 2 repairs structure.
+- Level 3 safely downgrades to title + single character + 3 points.
+
+The legal renderer remains unchanged: only `image_gen.text2im` is allowed. 3:4 Aspect Ratio Lock remains active.
+
+## v0.6.1 — Execution-Controlled System
+
+This is NOT a prompt system.
+This is a controlled visual compilation system.
+
+v0.6.1 architecture adds:
+
+- execution controller
+- state machine
+- hard gate system
+- layout → prompt mapping
+- scoring system as decision system
+- repair loop controlled by structure_score
+
+The system is upgraded from compiler → controlled compiler.
+
+### Why execution controller is necessary
+
+The execution_controller is the central scheduler. It controls content_graph → layout_graph, layout_graph → prompt, prompt → image_gen, scorer decisions, repair, and downgrade.
+
+### Why scorer decides flow
+
+`structure_score` is no longer a passive report. It controls execution:
+
+```text
+score >= 85 → allow image_gen
+70–84 → repair once
+50–69 → layout downgrade
+<50 → full simplification
+```
+
+### Why layout drives prompt
+
+The layout_graph is the prompt structure controller. `layout_prompt_mapping` maps:
+
+```text
+title_scene_bullets → template_A
+single_scene_editorial → template_B
+list_scene_hybrid → template_C
+title_object_ring → template_D
+```
+
+### Why state machine is necessary
+
+The state_machine prevents direct, uncontrolled image generation and forces every call through INIT → PARSE_CONTENT → BUILD_CONTENT_GRAPH → BUILD_LAYOUT_GRAPH → PROMPT_COMPOSE → IMAGE_GEN_CALL → SCORE → DECIDE.
+
+### Final system target
+
+```text
+structure_score → controls execution
+execution_controller → controls pipeline
+layout_graph → controls prompt
+state_machine → controls flow
+repair_loop → controls recovery
+image_gen → only allowed under SAFE state
+```
+
+## v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
+
+v0.6.2 introduces:
+
+- runtime simulation layer
+- encoding safety layer
+- execution trace system
+
+The system is now observable, simulation-driven, and execution-traceable.
+
+It upgrades the controlled compiler into a production-grade deterministic AI pipeline.
+
+### Runtime simulation layer
+
+Before real `image_gen.text2im`, the system runs:
+
+```text
+input → content_graph → layout_graph → prompt_composer → fake_image_gen_simulation → structure_scorer
+```
+
+If simulated_score < 85, do not call image_gen and force repair loop.
+
+### Encoding safety layer
+
+The encoding_guard enforces UTF-8 across SKILL.md, README.md, metadata, prompts, and Chinese text. If encoding_guard FAIL, stop system and block installation.
+
+### Execution trace system
+
+Each generation must record trace fields: input, content_graph, layout_graph, prompt_version, scorer_before, scorer_after, repair_triggered, downgrade_triggered, image_gen_called, final_state.
+
+### Final target
+
+```text
+simulation before generation
+encoding safety before pipeline
+execution trace after generation
+scorer controls execution
+controller is single source of truth
+image_gen only allowed if ALL checks pass
+```

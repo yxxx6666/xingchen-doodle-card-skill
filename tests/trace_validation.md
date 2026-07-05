@@ -1,0 +1,47 @@
+# Trace Validation — v0.6.2
+
+Purpose: verify execution trace completeness and reproducibility.
+
+## Trace completeness
+
+Trace must record:
+
+- input
+- content_graph
+- layout_graph
+- prompt_version
+- scorer_before
+- scorer_after
+- repair_triggered
+- downgrade_triggered
+- image_gen_called
+- final_state
+
+## Pipeline step coverage
+
+Trace must include all pipeline steps:
+
+1. input parse
+2. encoding guard check
+3. content graph build
+4. layout graph build
+5. runtime simulation
+6. execution controller decision
+7. prompt compose
+8. image_gen call if allowed
+9. structure scoring
+10. repair / downgrade / output decision
+11. execution trace write
+12. loop max 3
+
+## Reproducibility
+
+A valid trace must allow the generation process to be replayed or audited without hidden state.
+
+This makes the system a white-box AI pipeline.
+
+## 中文验证目标
+
+- trace 是否完整记录
+- 是否包含所有 pipeline steps
+- 是否能复现生成过程

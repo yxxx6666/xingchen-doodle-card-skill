@@ -99,3 +99,25 @@ Fix:
 When a failure is detected, revise the prompt before generating again.
 Do not solve style failures by adding more decorative elements.
 Solve them by simplifying.
+
+## v0.5.0 Structure Stability Repair
+
+This is not a feature expansion. It strengthens structure safety for image_gen doodle card prompts.
+
+New priority system:
+
+```text
+结构正确性 > 可读性 > 美观 > 丰富度
+```
+
+New pipeline layers:
+
+1. anatomy constraints layer
+2. scene complexity limiter
+3. pose safety layer
+4. prompt repair loop
+5. mandatory STRUCTURE SAFETY BLOCK in final prompts
+
+Core goal: reduce three hands / three feet / disconnected limbs / hands growing from wrong places / multi-action collapse / scene overload distortion.
+
+The v0.4.2 Execution Lock remains unchanged: the only legal renderer is `image_gen.text2im`. No PIL, Canvas, SVG, HTML, fallback renderer, or post-processing typography layer is allowed.

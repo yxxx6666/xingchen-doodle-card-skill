@@ -41,3 +41,20 @@ A hand-drawn doodle editorial illustration.
 - 是否插画 + 中文一次生成完成：是
 - 是否风格一致性优先于中文完美性：是
 ```
+
+## v0.5.0 STRUCTURE SAFETY BLOCK（必须自动插入）
+
+```text
+STRUCTURE SAFETY BLOCK:
+- Structure priority: structure correctness > readability > beauty > richness.
+- One main character only by default.
+- Exactly two hands and exactly two feet.
+- All limbs clearly connected to the body.
+- No third hand, no hidden hand, no hand emerging from desk/clothes/wall/bag/background.
+- One simple main action only.
+- Each hand has at most one clear action target.
+- At most 1–2 interaction objects; extra objects become background props.
+- Prefer seated pose, side-standing pose, slight hand extension, or static action.
+- Avoid twisted body, crossed arms, multi-direction action, high dynamic pose, running, jumping.
+- Do not use occlusion to hide anatomy errors; simplify instead.
+```
