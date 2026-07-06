@@ -1,8 +1,5 @@
 # 涂鸦卡片
 
-Owner tag: `xingchen`
-Skill ID: `xingchen-doodle-card-skill`
-
 Version: v0.6.2
 
 ## Positioning
