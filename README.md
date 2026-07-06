@@ -11,7 +11,16 @@
 <p align="center">
   <img src="./examples/example-1.png" width="30%" alt="涂鸦卡片示例图 1" />
   <img src="./examples/example-2.png" width="30%" alt="涂鸦卡片示例图 2" />
+  <img src="./examples/example-3.png" width="30%" alt="涂鸦卡片示例图 3" />
 </p>
+
+---
+
+## Installation
+
+一行代码安装：
+
+    git clone https://github.com/yxxx6666/xingchen-doodle-card-skill.git
 
 ---
 
