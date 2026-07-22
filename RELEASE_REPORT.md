@@ -1,39 +1,15 @@
-# RELEASE_REPORT — xingchen-doodle-card-skill v0.6.2
+# release report
 
-## Version
-v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
+Version: v0.8.10
 
-## Upgrade type
-System-level production hardening, not a feature expansion.
+## 问题
 
-## From → To
+旧版仍保留 `strict-size` 分支，容易让执行器误以为用户说“3:4”或举出 `1536×2048` 时是在要求固定像素，并可能错误索要 API Key。
 
-```text
-controlled compiler → production-grade deterministic AI pipeline
-```
+## 修复
 
-## What v0.6.2 adds
-
-- runtime simulation system via `core/runtime_simulator.md`
-- encoding guard system via `core/encoding_guard.md`
-- execution trace system via `core/execution_trace.md`
-- full orchestration controller
-- pre-execution validation stage
-- simulation-first execution model
-- white-box traceability
-
-## Hidden failure reduction
-
-The system reduces hidden failure cases by simulating before generation, blocking unsafe prompts before image_gen, checking UTF-8 integrity before pipeline execution, and recording the complete trace after each run.
-
-## What remains unchanged
-
-- Execution Lock remains active.
-- `image_gen.text2im` remains the only legal rendering path.
-- No new rendering system is introduced.
-- 3:4 card output remains active.
-- Chinese doodle illustration positioning remains unchanged.
-- Single-image generation mode remains active.
-
-## Validation result
-`python scripts/quick_validate.py` passed in source directory and after ZIP reverse-check.
+- 技能只保留 `publish-3x4` 比例模式。
+- 比例和像素完全解耦。
+- 删除固定像素、外部 API 和 API Key 逻辑。
+- 任意原生尺寸只要真实比例为 0.75 即可通过。
+- 明确固定像素请求不在 Codex `$imagegen` 保证范围内，不做虚假承诺。

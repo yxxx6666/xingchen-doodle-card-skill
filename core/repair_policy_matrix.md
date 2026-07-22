@@ -88,7 +88,7 @@ Repair loop must be driven by structure_score and gate_system:
 - 50–69: layout downgrade
 - <50: full simplification
 
-## v0.6.2 Simulation-aware repair
+## v0.8.10 Simulation-aware repair
 
 repair now depends on:
 
@@ -111,3 +111,45 @@ repair now depends on:
 If simulated_score < 85, do not call image_gen. Repair the prompt/layout first.
 If scorer delta shows instability, simplify layout and reduce props.
 If execution_trace shows repeated repair, downgrade to minimal safe output.
+
+
+## v0.8.10 Content Fidelity Repair Invalidation Rule
+
+If repair or downgrade changes Chinese page text:
+
+```text
+approved_page_text becomes invalid
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+BLOCK image_gen until both pass
+```
+
+This rule applies to all repair levels and all downgrade strategies. Repair may simplify visual structure, but it must not silently rewrite approved Chinese claims after approval.
+
+No renderer fallback is allowed. The default legal visual generator is Codex `$imagegen`; no external image API is allowed.
+
+
+## v0.8.10 Page Count Repair Rule
+
+If repair or downgrade changes Chinese page text:
+
+```text
+approved_page_text becomes invalid
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+BLOCK image_gen until both pass
+```
+
+If repair or downgrade changes page count, page role plan, or claim allocation:
+
+```text
+RE-RUN auto_page_planner
+RE-RUN page_content_allocator
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+RE-RUN output_file_namer
+BLOCK image_gen until all pass
+```
+
+Repair may simplify visual structure, but it must not silently reduce auto_page_planner.recommended_total_pages.
+No renderer fallback is allowed. The default legal visual generator is Codex `$imagegen`; no external image API is allowed.

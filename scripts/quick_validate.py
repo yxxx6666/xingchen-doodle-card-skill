@@ -1,81 +1,113 @@
 #!/usr/bin/env python3
+"""Validate the v0.8.10 ratio-only Codex imagegen skill."""
+from __future__ import annotations
+
+import json
+import subprocess
+import sys
 from pathlib import Path
-import json, re, sys
-SKILL_NAME='xingchen-doodle-card-skill'
-VERSION='v0.6.2'
-DISPLAY_NAME='涂鸦卡片'
-ROOT=Path(__file__).resolve().parents[1]
-errors=[]
-required=[
- 'SKILL.md','README.md','VERSION.md','CHANGELOG.md','RELEASE_REPORT.md','agents/openai.yaml',
- 'core/anatomy_guard.md','core/scene_limiter.md','core/pose_safety.md','core/prompt_repair_loop.md','core/prompt_composer.md',
- 'core/structure_scorer.md','core/layout_graph_compiler.md','core/content_graph_builder.md','core/repair_policy_matrix.md','core/generation_loop.md',
- 'core/execution_controller.md','core/state_machine.md','core/layout_prompt_mapping.md','core/gate_system.md',
- 'core/runtime_simulator.md','core/encoding_guard.md','core/execution_trace.md',
- 'tests/test_cases.json','tests/regression_cases.md','tests/runtime_tests.md','tests/trace_validation.md','scripts/quick_validate.py'
+
+ROOT = Path(__file__).resolve().parents[1]
+VERSION = "v0.8.10"
+REQUIRED = [
+    "SKILL.md", "README.md", "VERSION.md", "CHANGELOG.md", "RELEASE_REPORT.md", "agents/openai.yaml",
+    "core/auto_page_planner.md", "core/page_content_allocator.md", "core/content_fidelity_guard.md",
+    "core/series_style_manifest.md", "core/series_consistency_gate.md", "core/sequential_generation_controller.md",
+    "core/timeout_recovery_controller.md", "core/aspect_ratio_gate.md", "core/output_file_namer.md",
+    "references/typography-consistency-rules.md", "references/icon-consistency-rules.md",
+    "references/chart-consistency-rules.md", "references/aspect-ratio-lock.md",
+    "references/native-image-backend-contract.md", "references/image-gen-text2im-contract.md",
+    "references/validation-rules.md", "templates/series-progress-manifest-template.md",
+    "templates/image-gen-card-prompt-template.md", "templates/compact-timeout-retry-prompt-template.md",
+    "scripts/runtime_preflight.py", "scripts/validate_native_3x4.py", "scripts/finalize_series_files.py",
+    "scripts/validate_series_progress.py", "scripts/series_progress_controller.py",
+    "tests/test_native_3x4_pipeline.py",
 ]
-for rel in required:
-    if not (ROOT/rel).exists(): errors.append('Missing file: '+rel)
-if ROOT.name not in {SKILL_NAME, SKILL_NAME+'-v0.6.2'}:
-    errors.append(f'Root directory name should be {SKILL_NAME} or {SKILL_NAME}-v0.6.2, got {ROOT.name}')
-for rel in ['SKILL.md','README.md','VERSION.md','CHANGELOG.md','RELEASE_REPORT.md']:
-    p=ROOT/rel
-    if p.exists() and VERSION not in p.read_text(encoding='utf-8'):
-        errors.append(f'{rel} missing version {VERSION}')
-for rel in ['SKILL.md','README.md','agents/openai.yaml']:
-    p=ROOT/rel
-    if p.exists() and DISPLAY_NAME not in p.read_text(encoding='utf-8'):
-        errors.append(f'{rel} missing display name {DISPLAY_NAME}')
-lock_text='\n'.join((ROOT/rel).read_text(encoding='utf-8') for rel in ['SKILL.md','README.md','references/image-gen-text2im-contract.md','references/aspect-ratio-lock.md'] if (ROOT/rel).exists())
-for kw in ['image_gen.text2im','Execution Lock','Single Image Gen Authority','STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.','1080×1440','1536×2048','width / height = 0.75','0.745','0.755','fallback renderer','3:4']:
-    if kw not in lock_text: errors.append('missing preserved lock keyword: '+kw)
-all_text='\n'.join(p.read_text(encoding='utf-8') for p in ROOT.rglob('*.md'))
-for kw in ['production-grade deterministic AI pipeline','runtime simulation layer','encoding safety layer','execution trace system','observable','simulation-driven','execution-traceable','simulation before generation','encoding safety before pipeline','execution trace after generation','scorer controls execution','controller is single source of truth','image_gen only allowed if ALL checks pass','white-box AI pipeline','pre-execution validation stage']:
-    if kw not in all_text: errors.append('missing v0.6.2 semantic token: '+kw)
-module_tokens={
- 'core/runtime_simulator.md':['input','content_graph','layout_graph','prompt_composer','fake_image_gen_simulation','structure_scorer','simulated_score','risk_prediction','predicted_issues','should_execute','IF simulated_score < 85','DO NOT CALL image_gen','FORCE repair loop'],
- 'core/encoding_guard.md':['全系统 UTF-8 强制锁定','metadata corruption','文本丢失','prompt encoding error','IF any file encoding != UTF-8','BLOCK installation','REQUIRE repair','SKILL.md 中文必须完整','prompt 中文必须保留','image_gen text 必须可解析'],
- 'core/execution_trace.md':['input','content_graph','layout_graph','prompt_version','scorer_before','scorer_after','repair_triggered','downgrade_triggered','image_gen_called','final_state','SAFE | FAIL','white-box AI pipeline'],
- 'core/execution_controller.md':['runtime_simulator','structure_scorer','encoding_guard','execution_trace','IF encoding_guard FAIL','STOP SYSTEM','IF runtime_simulator FAIL','BLOCK image_gen','IF structure_score < 85','REPAIR'],
- 'core/generation_loop.md':['simulation-first pipeline','STATE 1: input parse','STATE 2: encoding guard check','STATE 3: content graph build','STATE 4: layout graph build','STATE 5: runtime simulation','STATE 6: execution controller decision','STATE 7: prompt compose','STATE 8: image_gen call (if allowed)','STATE 9: structure scoring','STATE 11: execution trace write','STATE 12: loop max 3'],
- 'core/structure_scorer.md':['simulation-aware scoring','pre_gen_score','post_gen_score','delta'],
- 'core/gate_system.md':['IF encoding_guard FAIL','BLOCK ALL','IF runtime_simulator FAIL','BLOCK image_gen','IF structure_score < 85','BLOCK image_gen'],
- 'core/repair_policy_matrix.md':['repair now depends on','simulation result','execution trace','scorer delta'],
-}
-for rel,toks in module_tokens.items():
-    p=ROOT/rel
-    if p.exists():
-        txt=p.read_text(encoding='utf-8')
-        for kw in toks:
-            if kw not in txt: errors.append(f'{rel} missing {kw}')
-try:
-    data=json.loads((ROOT/'tests/test_cases.json').read_text(encoding='utf-8'))
-    if not isinstance(data,list) or len(data)<10: errors.append('tests/test_cases.json must contain at least 10 cases')
-    for i,c in enumerate(data):
-        if isinstance(c,dict):
-            for f in ['structure_score_expected','failure_modes_expected','repair_strategy_expected','runtime_simulation_expected','encoding_guard_expected','execution_trace_expected']:
-                if f not in c: errors.append(f'tests/test_cases.json case {i} missing {f}')
-except Exception as e: errors.append('tests/test_cases.json invalid: '+str(e))
-for rel,toks in {
- 'tests/runtime_tests.md':['encoding failure case','simulation failure case','layout overload case','multi-hand risk case','scoring instability case'],
- 'tests/trace_validation.md':['trace 是否完整记录','是否包含所有 pipeline steps','是否能复现生成过程','input','content_graph','layout_graph','prompt_version','scorer_before','scorer_after','image_gen_called','final_state']
-}.items():
-    p=ROOT/rel
-    if p.exists():
-        txt=p.read_text(encoding='utf-8')
-        for kw in toks:
-            if kw not in txt: errors.append(f'{rel} missing {kw}')
-# UTF-8 validation and forbidden local rendering imports
-for p in ROOT.rglob('*'):
-    if not p.is_file(): continue
-    if any(part in {'.git','__MACOSX','__pycache__'} for part in p.parts): errors.append('Cache/temp path included: '+str(p.relative_to(ROOT)))
-    try: txt=p.read_text(encoding='utf-8')
-    except UnicodeDecodeError: errors.append('File is not UTF-8: '+str(p.relative_to(ROOT))); continue
-    if p.suffix in {'.py','.js','.ts','.mjs'} and p.name!='quick_validate.py':
-        for pat in [r'from\s+PIL\s+import',r'import\s+PIL',r'import\s+canvas',r'import\s+cairo']:
-            if re.search(pat,txt): errors.append('Forbidden local rendering import in '+str(p.relative_to(ROOT)))
-if errors:
-    print('Validation failed:')
-    for e in errors: print('-',e)
-    sys.exit(1)
-print(f'Validation passed for {SKILL_NAME} {VERSION}')
+
+
+def main() -> int:
+    errors: list[str] = []
+    for rel in REQUIRED:
+        if not (ROOT / rel).is_file():
+            errors.append(f"missing file: {rel}")
+    for obsolete in ["scripts/enforce_3x4.py", "scripts/generate_native_3x4.py", "tests/mock_image_api_server.py"]:
+        if (ROOT / obsolete).exists():
+            errors.append(f"obsolete file must not exist: {obsolete}")
+    for rel in ("SKILL.md", "README.md", "VERSION.md", "RELEASE_REPORT.md", "agents/openai.yaml"):
+        if VERSION not in (ROOT / rel).read_text(encoding="utf-8"):
+            errors.append(f"{rel} missing {VERSION}")
+
+    skill = (ROOT / "SKILL.md").read_text(encoding="utf-8")
+    if len(skill.splitlines()) > 500:
+        errors.append("SKILL.md must remain below 500 lines")
+    required_links = [
+        "core/auto_page_planner.md", "core/page_content_allocator.md", "core/series_style_manifest.md",
+        "core/sequential_generation_controller.md", "core/timeout_recovery_controller.md",
+        "core/aspect_ratio_gate.md", "core/output_file_namer.md", "core/prompt_composer.md",
+        "references/typography-consistency-rules.md", "references/icon-consistency-rules.md",
+        "references/chart-consistency-rules.md", "references/aspect-ratio-lock.md",
+        "references/native-image-backend-contract.md", "references/image-gen-text2im-contract.md",
+        "templates/image-gen-card-prompt-template.md", "templates/series-progress-manifest-template.md",
+    ]
+    for rel in required_links:
+        if f"]({rel})" not in skill:
+            errors.append(f"SKILL.md missing direct link: {rel}")
+
+    required_phrases = [
+        "只认比例，不认固定像素", "Codex 自带的 `$imagegen`", "1086×1448", "1024×1536",
+        "不得切换外部 API", "PAUSED_TIMEOUT", "每次请求最多携带一张",
+    ]
+    for phrase in required_phrases:
+        if phrase not in skill:
+            errors.append(f"SKILL.md missing ratio-only rule: {phrase}")
+
+    active_roots = [ROOT / "SKILL.md", ROOT / "core", ROOT / "references", ROOT / "scripts", ROOT / "templates", ROOT / "agents", ROOT / "tests"]
+    forbidden = ["strict" + "-size", "generate_native" + "_3x4"]
+    for target in active_roots:
+        paths = [target] if target.is_file() else [p for p in target.rglob("*") if p.is_file()]
+        paths = [p for p in paths if p.name != "quick_validate.py"]
+        for path in paths:
+            try:
+                text = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                continue
+            for token in forbidden:
+                if token in text:
+                    errors.append(f"forbidden fixed-pixel token in {path.relative_to(ROOT)}: {token}")
+
+    production_scripts = [ROOT / "scripts/finalize_series_files.py", ROOT / "scripts/validate_native_3x4.py"]
+    for path in production_scripts:
+        text = path.read_text(encoding="utf-8")
+        for operation in [".crop(", ".resize(", ".paste(", "ImageDraw", "draw.text", "ImageFont"]:
+            if operation in text:
+                errors.append(f"forbidden production pixel operation in {path.name}: {operation}")
+
+    commands = [
+        [sys.executable, str(ROOT / "scripts/runtime_preflight.py"), "--self-test"],
+        [sys.executable, str(ROOT / "scripts/validate_native_3x4.py"), "--self-test"],
+        [sys.executable, str(ROOT / "scripts/finalize_series_files.py"), "--self-test"],
+        [sys.executable, str(ROOT / "scripts/validate_series_progress.py"), "--self-test"],
+        [sys.executable, str(ROOT / "scripts/series_progress_controller.py"), "self-test"],
+        [sys.executable, str(ROOT / "tests/test_native_3x4_pipeline.py")],
+    ]
+    test_results = []
+    for command in commands:
+        result = subprocess.run(command, capture_output=True, text=True)
+        test_results.append({"command": command[-1], "returncode": result.returncode, "stdout": result.stdout.strip()})
+        if result.returncode != 0:
+            errors.append(f"test failed: {' '.join(command)}\n{result.stdout}\n{result.stderr}")
+
+    if errors:
+        print(json.dumps({"status": "FAIL", "errors": errors, "tests": test_results}, ensure_ascii=False, indent=2))
+        return 1
+    print(json.dumps({
+        "status": "PASS",
+        "version": VERSION,
+        "file_count": sum(1 for p in ROOT.rglob("*") if p.is_file()),
+        "tests": test_results,
+    }, ensure_ascii=False, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

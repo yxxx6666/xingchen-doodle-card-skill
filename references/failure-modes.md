@@ -120,4 +120,11 @@ New pipeline layers:
 
 Core goal: reduce three hands / three feet / disconnected limbs / hands growing from wrong places / multi-action collapse / scene overload distortion.
 
-The v0.4.2 Execution Lock remains unchanged: the only legal renderer is `image_gen.text2im`. No PIL, Canvas, SVG, HTML, fallback renderer, or post-processing typography layer is allowed.
+The execution lock uses Codex `$imagegen` in publish mode and an exact-size backend only in strict mode. No general PIL renderer, Canvas, SVG, HTML, fallback renderer, padding, crop, resize or post-processing typography layer is allowed.
+
+## Native-size failures — v0.8.10
+
+- In publish mode, lack of a size parameter is not an error; validate actual ratio after `$imagegen` returns.
+- Returned ratio differs from 3:4 in publish mode: discard and regenerate same page. In strict mode, exact-size mismatch also fails.
+- Finalizer sees a hash or dimension mismatch: block the whole package.
+- Any padding/crop/resize proposal: hard failure.

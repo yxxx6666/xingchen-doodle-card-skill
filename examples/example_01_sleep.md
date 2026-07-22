@@ -1,6 +1,6 @@
 # Example - 睡前手机偷走睡意
 
-## image_gen.text2im prompt
+## native image-model prompt
 
 ```text
 STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.
@@ -10,7 +10,7 @@ Do not use 2:3, 4:5, 9:16, square, A4, landscape, or long poster format.
 
 A hand-drawn doodle editorial illustration.
 
-Scene: a young Chinese woman puts her phone on a small bedside table in a quiet night routine.
+Scene: an office worker puts a phone on a small bedside table in a quiet night routine.
 Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space.
 
 Composition: vertical 3:4, subject placed bottom-left or side, with large empty space reserved for text.
@@ -35,9 +35,9 @@ Avoid:
 
 ## Execution Lock 自检
 
-- 是否只使用 image_gen.text2im：是
+- 是否只使用 Codex `$imagegen` 原生生成并验证真实 3:4 比例：是
 - 是否单次完整生成：是
-- 是否实际比例为 3:4：是
+- 比例检查：有尺寸时精确验证；无尺寸时仅做视觉检查
 - 是否不是 2:3 / 4:5 / 9:16：是
 - 是否无 fallback renderer：是
 - 是否无本地画字：是

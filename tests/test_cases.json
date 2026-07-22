@@ -359,6 +359,27 @@
       "downgrade_triggered",
       "image_gen_called",
       "final_state"
+    ],
+    "input": "结构稳定性回归测试：复杂动作和过多场景元素需要被压缩成单角色、单动作、少道具的涂鸦卡片。",
+    "expected_title": "结构先稳定",
+    "expected_subtitle": "复杂内容先降噪，再进入生成",
+    "expected_points": [
+      "单角色",
+      "单动作",
+      "少道具"
+    ],
+    "must_include": [
+      "STRUCTURE SAFETY BLOCK",
+      "image_gen.text2im",
+      "Execution Lock",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440"
+    ],
+    "must_avoid": [
+      "fallback renderer",
+      "PIL/Canvas/SVG/HTML rendering",
+      "multi-stage composition pipeline",
+      "overloaded scene"
     ]
   },
   {
@@ -385,6 +406,402 @@
       "downgrade_triggered",
       "image_gen_called",
       "final_state"
+    ],
+    "input": "结构稳定性回归测试：复杂动作和过多场景元素需要被压缩成单角色、单动作、少道具的涂鸦卡片。",
+    "expected_title": "结构先稳定",
+    "expected_subtitle": "复杂内容先降噪，再进入生成",
+    "expected_points": [
+      "单角色",
+      "单动作",
+      "少道具"
+    ],
+    "must_include": [
+      "STRUCTURE SAFETY BLOCK",
+      "image_gen.text2im",
+      "Execution Lock",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440"
+    ],
+    "must_avoid": [
+      "fallback renderer",
+      "PIL/Canvas/SVG/HTML rendering",
+      "multi-stage composition pipeline",
+      "overloaded scene"
+    ]
+  },
+  {
+    "input": "运动零食长文：66万人荟萃分析显示低于WHO建议标准死亡风险下降31%，达到2-3倍标准下降37%；可穿戴设备研究显示每天2分钟高强度活动与心血管死亡风险下降约24%相关，每天3–4分钟短时高强度活动与多项死亡风险下降相关。",
+    "expected_title": "别等下次了",
+    "expected_subtitle": "每天几分钟运动零食，也算动起来",
+    "expected_points": [
+      "从不动到动，收益最大",
+      "短促运动，也可能有收益"
+    ],
+    "must_include": [
+      "Content Fidelity Layer",
+      "evidence ledger",
+      "claim binding",
+      "content_fidelity_guard",
+      "image_gen.text2im",
+      "STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.",
+      "1080×1440"
+    ],
+    "must_avoid": [
+      "每周运动几分钟，死亡风险降低31%",
+      "几分钟降低31%死亡风险",
+      "cross-study merge",
+      "fallback renderer",
+      "PIL/Canvas/SVG/HTML rendering"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "unbound number",
+      "misleading cover numeric claim",
+      "cross-study claim merging"
+    ],
+    "repair_strategy_expected": "Rewrite cover to qualitative claim; preserve separate evidence pages; rerun claim_binding_validator and content_fidelity_guard",
+    "expected_layout_type": "cover_plus_evidence_pages",
+    "execution_gate_expected": "image_gen only allowed after claim_binding_validator PASS and content_fidelity_guard PASS",
+    "runtime_simulation_expected": "content_risk_prediction SAFE and simulated_score >= 85 before image_gen",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state",
+      "evidence_ledger_version",
+      "page_claim_bindings",
+      "content_fidelity_status",
+      "approved_page_text_hash"
+    ],
+    "evidence_ledger_expected": {
+      "must_identify_claims": [
+        "66万人荟萃分析",
+        "31%",
+        "37%",
+        "可穿戴设备",
+        "每天2分钟",
+        "每天3–4分钟"
+      ],
+      "must_record_prohibited_merges": true
+    },
+    "claim_binding_expected": {
+      "status": "PASS",
+      "must_bind_every_number_to_one_claim_id": true,
+      "must_block_cover_percentage_merge": true
+    },
+    "content_fidelity_expected": {
+      "status": "PASS",
+      "must_block_unbound_numbers": true,
+      "must_preserve_qualifiers": true,
+      "must_avoid_cross_study_merge": true
+    }
+  },
+  {
+    "input": "研究发现，A 与 B 风险下降相关。",
+    "expected_title": "研究发现相关下降",
+    "expected_subtitle": "A 与 B 风险更低相关",
+    "expected_points": [
+      "保留相关表述",
+      "不写成直接因果"
+    ],
+    "must_include": [
+      "correlation is not causation",
+      "相关",
+      "content_fidelity_guard",
+      "claim_binding_validator",
+      "image_gen.text2im"
+    ],
+    "must_avoid": [
+      "A 会直接降低 B",
+      "A 一定能预防 B",
+      "直接导致",
+      "保证"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "observational claim uses causal wording",
+      "causal overclaim for correlational evidence"
+    ],
+    "repair_strategy_expected": "Rewrite causal wording to 与风险更低相关 or 相关下降; rerun fidelity guard",
+    "expected_layout_type": "single_scene_editorial",
+    "execution_gate_expected": "BLOCK image_gen if observational claim uses causal wording",
+    "runtime_simulation_expected": "causal_overclaim_prediction false and simulated_score >= 85",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state",
+      "evidence_ledger_version",
+      "page_claim_bindings",
+      "content_fidelity_status",
+      "approved_page_text_hash"
+    ],
+    "evidence_ledger_expected": {
+      "claim_type": "correlational",
+      "qualifier": "相关"
+    },
+    "claim_binding_expected": {
+      "status": "PASS",
+      "must_preserve_claim_type": true
+    },
+    "content_fidelity_expected": {
+      "status": "PASS",
+      "must_block_unbound_numbers": true,
+      "must_preserve_qualifiers": true,
+      "must_avoid_cross_study_merge": true
+    }
+  },
+  {
+    "input": "建议一：每天3分钟短时活动。建议二：WHO建议每周150分钟中等强度运动。",
+    "expected_title": "时间单位别混用",
+    "expected_subtitle": "每天3分钟和每周150分钟是两条线",
+    "expected_points": [
+      "保留每天/每周",
+      "不合并成一个承诺"
+    ],
+    "must_include": [
+      "numbers must keep their source anchor",
+      "do not merge numbers across studies/time windows",
+      "每天3分钟",
+      "每周150分钟",
+      "image_gen.text2im"
+    ],
+    "must_avoid": [
+      "每周3分钟达到150分钟效果",
+      "每天150分钟",
+      "时间窗口错配"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "invented time windows",
+      "percentage/time-window mismatch",
+      "unbound time units"
+    ],
+    "repair_strategy_expected": "Separate daily and weekly recommendations into separate bullets; rerun claim binding",
+    "expected_layout_type": "comparison_bullets",
+    "execution_gate_expected": "BLOCK image_gen if number time_window mismatch exists",
+    "runtime_simulation_expected": "unbound_number_prediction false; misleading_cover_prediction false; simulated_score >= 85",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "content_graph",
+      "layout_graph",
+      "prompt_version",
+      "scorer_before",
+      "scorer_after",
+      "repair_triggered",
+      "downgrade_triggered",
+      "image_gen_called",
+      "final_state",
+      "evidence_ledger_version",
+      "page_claim_bindings",
+      "content_fidelity_status",
+      "approved_page_text_hash"
+    ],
+    "evidence_ledger_expected": {
+      "must_identify_claims": [
+        "每天3分钟",
+        "每周150分钟"
+      ],
+      "must_record_prohibited_merges": true
+    },
+    "claim_binding_expected": {
+      "status": "PASS",
+      "must_bind_every_number_to_one_claim_id": true
+    },
+    "content_fidelity_expected": {
+      "status": "PASS",
+      "must_block_unbound_numbers": true,
+      "must_preserve_qualifiers": true,
+      "must_avoid_cross_study_merge": true
+    }
+  },
+  {
+    "input": "封面页加内容页。长文科普：一篇包含66万人荟萃分析、WHO建议、31%、37%、可穿戴设备研究、每天2分钟、每天3–4分钟、机制推测和行动建议的运动零食文章。",
+    "expected_title": "别等下次了",
+    "expected_subtitle": "每天几分钟运动零食，也算动起来",
+    "expected_points": [
+      "从不动到动，收益最大",
+      "多研究分开讲",
+      "短促运动也可能有收益"
+    ],
+    "must_include": [
+      "auto_page_planner",
+      "recommended_total_pages",
+      "page_content_allocator",
+      "output_file_namer",
+      "01-cover",
+      "image_gen.text2im"
+    ],
+    "must_avoid": [
+      "default 2 pages",
+      "prompt_count mismatch",
+      "bypass auto_page_planner",
+      "fallback renderer"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "under_page_count_risk",
+      "page_count_mismatch_prediction",
+      "missing_ordered_file_name_prediction"
+    ],
+    "repair_strategy_expected": "Rerun auto_page_planner and page_content_allocator; keep recommended_total_pages >= 5 for dense multi-study content",
+    "expected_layout_type": "cover_plus_5_or_more_content_pages",
+    "execution_gate_expected": "BLOCK image_gen if prompt_count != recommended_total_pages",
+    "runtime_simulation_expected": "page_count_risk_prediction SAFE and simulated_score >= 85",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "evidence_ledger_version",
+      "auto_page_planner_result",
+      "recommended_total_pages",
+      "page_role_plan",
+      "page_content_allocator_result",
+      "prompt_count",
+      "output_file_namer_result",
+      "ordered_file_names",
+      "image_gen_called",
+      "final_state"
+    ],
+    "evidence_ledger_expected": {
+      "must_identify_claims": [
+        "31%",
+        "37%",
+        "每天2分钟",
+        "每天3–4分钟"
+      ],
+      "must_record_prohibited_merges": true
+    },
+    "claim_binding_expected": {
+      "status": "PASS",
+      "must_bind_every_number_to_one_claim_id": true
+    },
+    "content_fidelity_expected": {
+      "status": "PASS",
+      "must_avoid_cross_study_merge": true
+    },
+    "auto_page_planner_expected": {
+      "has_explicit_page_count": false,
+      "recommended_total_pages_min": 5,
+      "must_not_treat_cover_plus_content_as_two_pages": true
+    },
+    "page_content_allocator_expected": {
+      "allocated_page_count_equals_recommended_total_pages": true
+    },
+    "output_file_namer_expected": {
+      "named_file_count_equals_recommended_total_pages": true,
+      "must_prefix_files": [
+        "01",
+        "02",
+        "03"
+      ]
+    }
+  },
+  {
+    "input": "只做2页极简版。内容是一篇多研究健康科普长文。",
+    "expected_title": "极简版提醒",
+    "expected_subtitle": "页数明确，但压缩风险要提示",
+    "expected_points": [
+      "用户明确2页",
+      "高密度内容有压缩风险"
+    ],
+    "must_include": [
+      "has_explicit_page_count",
+      "explicit_total_pages",
+      "under_page_count_risk",
+      "WARNING"
+    ],
+    "must_avoid": [
+      "pretend no compression risk",
+      "bypass content_fidelity_guard"
+    ],
+    "structure_score_expected": 85,
+    "failure_modes_expected": [
+      "under_page_count_risk"
+    ],
+    "repair_strategy_expected": "Respect explicit page count but mark WARNING and preserve factual boundaries",
+    "expected_layout_type": "explicit_two_page_minimal",
+    "execution_gate_expected": "Allow only if content_fidelity_guard PASS and risk is disclosed",
+    "runtime_simulation_expected": "page_count_risk_prediction WARNING",
+    "encoding_guard_expected": "UTF-8 PASS before pipeline",
+    "execution_trace_expected": [
+      "input",
+      "evidence_ledger_version",
+      "auto_page_planner_result",
+      "recommended_total_pages",
+      "page_role_plan",
+      "page_content_allocator_result",
+      "prompt_count",
+      "output_file_namer_result",
+      "ordered_file_names",
+      "image_gen_called",
+      "final_state"
+    ],
+    "auto_page_planner_expected": {
+      "has_explicit_page_count": true,
+      "explicit_total_pages": 2,
+      "under_page_count_risk": true
+    },
+    "page_content_allocator_expected": {
+      "allocated_page_count_equals_recommended_total_pages": true
+    },
+    "output_file_namer_expected": {
+      "must_prefix_files": [
+        "01",
+        "02"
+      ]
+    }
+  },
+  {
+    "input": "女孩低头看手机，手机屏幕朝向自己，但画面里不能让观众从侧面读清屏幕正文。",
+    "expected_title": "屏幕只给自己看",
+    "expected_subtitle": "观众不该从侧面读清全文",
+    "expected_points": [
+      "正文放在信息区",
+      "屏幕只做符号线"
+    ],
+    "must_include": [
+      "viewpoint_visibility_guard",
+      "Prop Text Visibility Lock",
+      "self_reading",
+      "viewer_presentation",
+      "background_prop",
+      "prop_visibility_plan",
+      "viewpoint_visibility_status",
+      "readability_misuse_detected"
+    ],
+    "must_avoid": [
+      "self-reading prop with clear readable body text",
+      "side-view phone screen readable like front-facing sign"
+    ],
+    "viewpoint_visibility_expected": {
+      "prop_role": "self_reading",
+      "viewer_facing": false,
+      "text_visibility": "symbolic_only | illegible | blank",
+      "expected_gate": "clear_readable self-reading prop blocks image_gen"
+    },
+    "structure_score_expected": 85,
+    "execution_gate_expected": "viewpoint_visibility_status FAIL blocks image_gen",
+    "runtime_simulation_expected": "viewpoint_visibility_risk_prediction SAFE before image_gen",
+    "execution_trace_expected": [
+      "viewpoint_visibility_guard_result",
+      "prop_visibility_plan",
+      "visibility_conflicts",
+      "readability_misuse_detected"
     ]
   }
 ]

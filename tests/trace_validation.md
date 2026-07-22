@@ -1,4 +1,4 @@
-# Trace Validation — v0.6.2
+# Trace Validation — v0.8.10
 
 Purpose: verify execution trace completeness and reproducibility.
 
@@ -45,3 +45,20 @@ This makes the system a white-box AI pipeline.
 - trace 是否完整记录
 - 是否包含所有 pipeline steps
 - 是否能复现生成过程
+
+## v0.8.10 Viewpoint visibility trace fields
+
+Trace must record:
+
+- viewpoint_visibility_guard_result
+- prop_visibility_plan
+- visibility_conflicts
+- readability_misuse_detected
+- viewpoint_visibility_risk_prediction
+- readable_surface_perspective_prediction
+
+A valid trace must show whether viewpoint_visibility_guard passed before image_gen.text2im was authorized.
+
+## Required prop role values
+
+Trace validation must preserve `self_reading`, `viewer_presentation`, and `background_prop` in the prop_visibility_plan.

@@ -1,92 +1,36 @@
-# Style Contract
+# Style Contract v0.8.10
 
-## Style Lock
+## Fixed visual identity
 
-This Skill has one fixed style direction. Do not mix in unrelated styles.
+- hand-drawn Chinese doodle editorial illustration;
+- clean black ink outline with slightly imperfect sketch lines;
+- flat 2D composition;
+- white or warm off-white background;
+- soft low-saturation pastel accents;
+- generous negative space;
+- calm, warm, practical and readable mood.
 
-## Core style
+## Adaptive subject
 
-- hand-drawn doodle comic
-- minimalist editorial infographic illustration
-- clean black ink outline
-- slightly imperfect rough lines
-- flat 2D composition
-- minimal line art
-- large clean white negative space
-- soft warm pastel color accents
-- cute restrained doodle character
-- calm cozy daily moment
+Choose the subject from the content. The page may use a woman, man, student, older adult, family, animal, object-led scene or character-free information graphic. Do not force one demographic across unrelated topics.
 
-## 中文风格解释
+When a human appears:
 
-- 手绘涂鸦漫画
-- 简约编辑信息图插图
-- 干净黑色墨迹轮廓
-- 略显不完美的粗略线条
-- 平面二维构图
-- 极简线条艺术
-- 大面积干净白色负空间
-- 只用柔和温暖的粉彩点缀
-- 可爱但克制
-- 温馨日常
+- use a simple, natural pose;
+- keep facial expression restrained;
+- use simple daily clothing;
+- preserve clear anatomy and one main action.
 
-## Must have
+## Typography feeling
 
-1. 垂直 3:4 比例。
-2. 白色或米白色背景。
-3. 黑色线条为主。
-4. 使用少量柔和粉彩色。
-5. 主角是一位年轻中国女性。
-6. 主角表情极简，有轻松微笑。
-7. 人物比例可爱简化。
-8. 姿势自然。
-9. 穿简单休闲装。
-10. 画面干净、通透、不拥挤。
-11. 视线高度构图，避免复杂俯视或仰视。
-12. 道具必须极简。
-13. 负空间必须明显。
-14. 整体像杂志边栏插画、生活栏目插画、轻信息图插画。
+Chinese title and body text are required when present in `approved_page_text`. Use one coherent handwritten Chinese type feeling across the series, with clear hierarchy and enough spacing. Critical text must remain readable and inside safe margins.
 
-## Negative constraints
+## Avoid
 
-Avoid:
-
-- watercolor painting
-- anime style
-- manga style
-- Korean comic style
-- 3D render
-- realistic photography
-- realistic lighting
-- cinematic rendering
-- luxury commercial poster mood
-- complex perspective
-- complex space
-- complex background
-- too many details
-- dense composition
-- luxury poster design
-- painterly texture
-- over-rendered character
-- exaggerated expression
-- large typography
-- Chinese text
-- information-dense layout
-- complex UI
-- strong tech feeling
-- cyberpunk
-- horror atmosphere
-- mystical atmosphere
-- depressing gloomy mood
-- high saturation colors
-- oil painting texture
-- rough low-quality child drawing
-- overly cute decoration
-- excessive ornament
-- commercial poster style
-
-## Quality principle
-
-The image should feel light, clean, breathable, warm, and editorial.
-
-It should not feel explosive, cinematic, luxurious, over-designed, or visually loud.
+- anime, manga, photorealism, 3D rendering or cinematic lighting;
+- luxury advertising, cyberpunk, horror or mystical styling;
+- dense backgrounds, complex perspective or excessive ornament;
+- high saturation and over-rendered textures;
+- multiple competing actions or infographic overload;
+- missing Chinese text, tiny text or decorative English that adds new facts;
+- local text rendering, post-processing or fallback renderers.

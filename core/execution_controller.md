@@ -1,118 +1,51 @@
-# execution_controller — v0.6.1 Central Execution Controller
+# execution_controller — v0.8.10
 
-v0.6.1 architecture = Execution-Controlled System.
+The execution controller is the single authorization point for every formal image request.
 
-This is the only scheduler for the whole pipeline. All `image_gen.text2im` calls must be approved by the execution_controller.
+## Pre-generation approval
 
-## Hard rules
+Approve the current page only when all are true:
 
-```text
-IF structure_score < 85:
-  BLOCK image_gen
-  ENTER repair loop
+1. content, evidence, page allocation, claim binding and viewpoint checks passed;
+2. immutable series style manifest exists;
+3. filename and progress manifests passed;
+4. current page is the first incomplete page and every earlier page is COMPLETE;
+5. `scripts/runtime_preflight.py` confirmed version `v0.8.10`;
+6. the selected backend matches the chosen mode: Codex `$imagegen` for publish-3x4, ;
+7. requested ratio is `3:4`; no exact pixel size is required;
+8. no padding, crop, resize, stretch, local text or compositing path is enabled.
 
-IF structure_score < 70:
-  FORCE layout downgrade
+## Returned-image handling
 
-IF structure_score < 50:
-  FORCE content simplification
-```
-
-## Responsibilities
-
-- 控制 content_graph → layout_graph
-- 控制 layout_graph → prompt
-- 控制 prompt → image_gen
-- 控制 scorer → 是否通过
-- 控制 repair → 是否触发
-- 控制 downgrade → 是否执行
-
-## Approval contract
-
-Before calling `image_gen.text2im`, the controller must verify:
-
-1. execution_state is ready for IMAGE_GEN_CALL.
-2. layout_graph exists and was compiled from content_graph.
-3. layout_prompt_mapping selected a valid template.
-4. structure_score >= 85.
-5. risk_level = SAFE.
-6. repair_required = false.
-7. Execution Lock and Aspect Ratio Lock remain present.
-8. image path is still `image_gen.text2im` only.
-
-If any item fails, approval is denied.
-
-## Controller output
-
-```json
-{
-  "execution_approval": false,
-  "next_state": "REPAIR | DOWNGRADE | OUTPUT | IMAGE_GEN_CALL",
-  "controller_reason": "",
-  "required_action": ""
-}
-```
-
-## Non-negotiable target
+A returned image must be written as raw model/API output bytes and enter:
 
 ```text
-structure_score → controls execution
-execution_controller → controls pipeline
-image_gen → only allowed under SAFE state
+actual dimension read
+→ 3:4 ratio check
+→ SHA-256 record
+→ series consistency check
 ```
 
-## v0.6.2 Full Orchestration Layer
+A wrong-size image is a content failure. Delete or quarantine it and regenerate the same page. Never repair it and never advance the page pointer.
 
-The execution_controller is now the single source of truth and must manage:
+## Final delivery approval
 
-- runtime_simulator
-- structure_scorer
-- encoding_guard
-- execution_trace
+Approve only when every page is COMPLETE and finalization independently reopens every file and confirms:
 
-## New execution order
+- actual ratio 0.75 within tolerance;
+- ratio 0.75 within tolerance;
+- source SHA-256 matches the progress manifest when a hash is recorded;
+- final copied file hash equals source hash;
+- generation and delivery order equal `P01..Pn`;
+- filenames are continuous from `01`.
 
-```text
-input
-→ encoding_guard
-→ content_graph
-→ layout_graph
-→ runtime_simulator
-→ execution_controller decision
-→ prompt_composer
-→ image_gen (if allowed)
-→ structure_scorer
-→ execution_trace
-→ repair loop
-```
-
-## New hard rules
+## Hard blocks
 
 ```text
-IF encoding_guard FAIL:
-  STOP SYSTEM
-
-IF runtime_simulator FAIL:
-  BLOCK image_gen
-
-IF structure_score < 85:
-  REPAIR
-```
-
-## Production decision contract
-
-The controller approves `image_gen.text2im` only when ALL checks pass:
-
-- encoding_guard PASS
-- runtime_simulator PASS
-- simulated_score >= 85
-- structure_score >= 85
-- risk_prediction = SAFE
-- risk_level = SAFE
-- layout_prompt_mapping valid
-- prompt_composer contains Execution Lock and Aspect Ratio Lock
-
-```text
-controller is single source of truth
-image_gen only allowed if ALL checks pass
+IF runtime version != v0.8.10: BLOCK
+IF backend capability is inferred only from prompt text: BLOCK
+IF actual dimensions != requested dimensions: BLOCK
+IF any pixel post-processing is proposed: BLOCK
+IF current page != first incomplete page: BLOCK
+IF finalizer relies only on manifest pass flags: BLOCK
 ```

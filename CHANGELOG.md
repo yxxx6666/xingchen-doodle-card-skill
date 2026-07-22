@@ -1,83 +1,16 @@
-# Changelog
+# changelog
 
-## v0.5.0 - 2026-07-03
+## v0.8.10
 
-### Rename patch
+- 删除 `strict-size` 固定像素模式。
+- 删除 Images API 和 `OPENAI_API_KEY` 路径。
+- 删除 `scripts/generate_native_3x4.py` 与 API mock 测试。
+- 所有比例表达只解释为宽高比，不解释为固定像素。
+- 用户举出 `1080×1440` 或 `1536×2048` 等数字时，只提取 3:4 比例，除非用户明确要求最终实际像素严格相等；即使明确要求，也不切换外部 API，而是说明当前 Codex `$imagegen` 不保证固定像素。
+- 统一比例验收为 `abs(width/height-0.75)<=0.001`。
+- 保留顺序生成、超时恢复、断点续跑、系列一致性和最终重新验图。
 
-- Renamed public display name to 涂鸦卡片.
-- Renamed package / Skill ID to `xingchen-doodle-card-skill`.
-- Kept Execution Lock + Single Image Gen Authority rules unchanged.
+## v0.8.9
 
-## v0.5.0 - 2026-07-02
-
-Execution Lock + Single Image Gen Authority patch.
-
-### Added
-
-- Explicit Execution Lock.
-- Explicit Single Image Gen Authority.
-- Prohibition against bypassing image_gen to fix Chinese text.
-- Standard prompt updated to use `imperfect sketch lines` and `with large empty space reserved for text`.
-- Avoid list updated to include CSS text systems and multi-stage composition pipeline.
-
-### Kept
-
-- `image_gen.text2im` remains the only legal visual generation path.
-- No fallback renderer.
-- No local deterministic Chinese layout.
-- No post-processing typography layers.
-
-## v0.5.0 — Structure Stability Repair
-
-- Added core/anatomy_guard.md.
-- Added core/scene_limiter.md.
-- Added core/pose_safety.md.
-- Added core/prompt_repair_loop.md.
-- Added core/prompt_composer.md with mandatory STRUCTURE SAFETY BLOCK.
-- Added references/structure-stability-rules.md.
-- Added structure priority system: 结构正确性 > 可读性 > 美观 > 丰富度.
-- Added one-main-character default rule.
-- Added exactly two hands / two feet / connected limbs constraints.
-- Added one simple main action limit.
-- Added 1–2 interaction object limit.
-- Added scene overload repair rules.
-- Added prompt repair loop with simplification priority.
-- Updated prompt templates with structure safety block.
-- Updated quick_validate.py for v0.5.0 structure stability checks.
-
-## v0.6.0 — Structure-aware Compilation System
-
-- added structure scorer
-- added layout graph compiler
-- added content graph builder
-- added repair policy matrix
-- added generation loop
-- upgraded prompt composer to compiler
-- added scoring-based repair loop
-- added tests/regression_cases.md
-- strengthened tests/test_cases.json with structure_score_expected, failure_modes_expected, repair_strategy_expected
-- upgraded quick_validate.py for v0.6.0 semantic checks
-
-## v0.6.1 — Execution-Controlled System
-
-- added execution controller
-- added state machine
-- added hard gate system
-- added layout_prompt_mapping
-- upgraded layout_graph to controller role
-- upgraded scorer to decision system
-- converted generation_loop into state machine
-- made image_gen.text2im calls controller-gated
-- strengthened regression cases with expected structure_score and expected layout_type
-
-## v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
-
-- added runtime simulation system
-- added encoding guard system
-- added execution trace system
-- upgraded controller to full orchestration layer
-- added pre-execution validation stage
-- upgraded generation_loop to simulation-first pipeline
-- added simulation-aware structure scoring
-- added production hard gates for encoding and runtime simulation
-- added runtime_tests.md and trace_validation.md
+- 分离服务超时与内容失败。
+- 新增磁盘断点、会话重连恢复和单页超时暂停。

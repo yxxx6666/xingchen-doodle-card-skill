@@ -1,6 +1,6 @@
 # prompt_repair_loop — v0.5.0 Failure Repair Loop
 
-Purpose: automatically repair risky prompts before image_gen.text2im is called.
+Purpose: automatically repair risky prompts before a formal image-model request is dispatched.
 
 ## Trigger risks
 
@@ -34,8 +34,7 @@ Repaired for structure stability: one main character, one simple action, at most
 
 ## No renderer fallback
 
-Repair loop only rewrites the prompt. It does not enable PIL, Canvas, SVG, HTML, post-processing typography, or any fallback renderer.
-The only legal renderer remains image_gen.text2im.
+Repair loop only rewrites the prompt. It does not enable general PIL rendering, Canvas, SVG, HTML, post-processing typography, or any fallback renderer. Ratio repair is forbidden. The default legal renderer is Codex `$imagegen`; no external image API helper is allowed.
 
 ## Cross-layer enforcement keywords
 
@@ -67,3 +66,45 @@ The repair loop now uses structure_score and risk_level.
 - max_attempts = 3
 
 The repair loop is scoring-based: structure_score below 85 triggers repair.
+
+
+## v0.8.10 Content Fidelity Repair Invalidation Rule
+
+If repair or downgrade changes Chinese page text:
+
+```text
+approved_page_text becomes invalid
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+BLOCK image_gen until both pass
+```
+
+This rule applies to all repair levels and all downgrade strategies. Repair may simplify visual structure, but it must not silently rewrite approved Chinese claims after approval.
+
+No renderer fallback is allowed. The default legal renderer is Codex `$imagegen`; no external image API helper is allowed.
+
+
+## v0.8.10 Page Count Repair Rule
+
+If repair or downgrade changes Chinese page text:
+
+```text
+approved_page_text becomes invalid
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+BLOCK image_gen until both pass
+```
+
+If repair or downgrade changes page count, page role plan, or claim allocation:
+
+```text
+RE-RUN auto_page_planner
+RE-RUN page_content_allocator
+RE-RUN claim_binding_validator
+RE-RUN content_fidelity_guard
+RE-RUN output_file_namer
+BLOCK image_gen until all pass
+```
+
+Repair may simplify visual structure, but it must not silently reduce auto_page_planner.recommended_total_pages.
+No renderer fallback is allowed. The default legal renderer is Codex `$imagegen`; no external image API helper is allowed.

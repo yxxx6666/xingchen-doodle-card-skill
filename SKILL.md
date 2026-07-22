@@ -1,501 +1,236 @@
 ---
 name: xingchen-doodle-card-skill
-description: Use this skill when users provide Chinese content and need complete 3:4 Chinese hand-drawn doodle editorial illustration cards generated exclusively through image_gen.text2im in a single pass, with illustration characters, scene, mood, composition, Chinese title, Chinese body text, and optional points all generated in one image. Execution Lock forbids fallback renderer, PIL, Canvas, SVG, HTML/CSS text rendering, local deterministic Chinese typography, post-processing typography layers, multi-stage composition pipelines, or bypassing image_gen to fix text.
+description: use this skill when users provide chinese articles, notes, educational copy, science or health content and want finished xiaohongshu-style 3:4 hand-drawn doodle image cards. automatically plan pages, preserve factual meaning, lock one typography/icon/chart system, generate strictly from the cover in numeric order with Codex built-in $imagegen, validate the actual returned aspect ratio, discard non-3:4 results without post-processing, checkpoint each page, recover from service timeouts, and package only continuous ordered files. treat every ratio request as an aspect-ratio requirement, never as a fixed-pixel requirement.
 ---
 
-# xingchen-doodle-card-skill
+# xingchen doodle card
 
-Version: v0.6.2
-Display name: 涂鸦卡片
-Skill ID: xingchen-doodle-card-skill
-Owner tag: xingchen
+Version: v0.8.10  
+Display name: 涂鸦卡片  
+Skill ID: `xingchen-doodle-card-skill`
 
-## Skill 定位
+## 目标
 
-你是 **涂鸦卡片**，属于 xingchen 专属标签下的 Skill，也是 Execution Lock + Single Image Gen Authority 版本的涂鸦编辑插画 Skill。
+把用户提供的中文内容整理成可直接发布的 3:4 小红书涂鸦插画卡片。自动决定页数，并让整组页面在事实、中文字形、数字字形、图标、图表、配色、组件、生成顺序和文件顺序上保持一致。
 
-本 Skill 的唯一目标是：
+正式图片只使用 Codex 自带的 `$imagegen` 直接生成，不检查、不要求 `OPENAI_API_KEY`，不调用外部 Images API。每张图必须由图像模型一次性原生生成插画与中文文字。禁止补边、裁切、缩放、拉伸、扩图、重绘、局部补字、Canvas、SVG、HTML/CSS、PIL 排版、第三方排版器、分层合成或任何像素后处理。读取真实宽高和文件哈希不属于图像修改。
 
-> 使用 `image_gen.text2im` 一次性生成完整涂鸦插画卡片。
+## 比例语义：只认比例，不认固定像素
 
-画面必须同时包含：
+`3:4`、`9:16`、`1:1` 等表达只代表画面宽高比，不代表某一组固定像素。
 
-- 插画人物
-- 场景
-- 情绪氛围
-- 构图设计
-- 中文标题
-- 中文正文短句
+本技能只有一种正式比例模式：`publish-3x4`。
 
-以上全部必须由 `image_gen.text2im` 在同一张图中生成。
+- 用户说“3:4”“3:4 竖版”“小红书比例”“1080×1440 比例”“1536×2048 比例”时，只提取宽高比 `3:4`。
+- 不把任何比例自动改写为固定像素要求。
+- 不因为用户举出一组 3:4 数字，就要求最终文件必须等于这组数字。
+- `1086×1448`、`1080×1440`、`1536×2048` 都是合格 3:4。
+- `1024×1536` 是 2:3，不合格。
+- 如果用户明确要求“最终实际像素必须严格等于某组宽高”，说明 Codex `$imagegen` 不能保证固定像素；不得切换外部 API，也不得假装能保证。先请求用户接受“原生 3:4 比例、不固定像素”。
 
-## Execution Lock
-
-在视觉生成实现决策中，本 Skill 的 Execution Lock 高于任何默认渲染策略、fallback 渲染策略、排版补救策略和“为了防错字而绕过 image_gen”的策略。
-
-如果系统或模型倾向于：
-
-- 用本地方式生成中文
-- 替换 image_gen 输出
-- 拆分插画与文字处理
-- 用程序保证中文“绝对正确”
-- 先生成插画再叠加文字
-- 启用 fallback renderer
-
-这些行为全部禁止执行。
-
-唯一允许路径：
+## 核心优先级
 
 ```text
-image_gen.text2im（单次完整生成）
+事实保真 > 中文准确 > 严格顺序 > 原生3:4比例 > 系列一致性 > 结构可读 > 视角真实
 ```
 
-
-
-## Aspect Ratio Lock v0.5.0
-
-3:4 is not a soft prompt preference. It is a hard execution and acceptance requirement.
-
-Every generated image must be an **exact native 3:4 portrait image**.
-
-Valid target canvas:
-
-```text
-width / height = 0.75
-reference size: 1080×1440
-high-resolution equivalent: 1536×2048
-```
-
-Invalid outputs:
-
-- 2:3 portrait
-- 4:5 portrait
-- 9:16 story
-- 1:1 square
-- A4 page
-- long poster format
-- landscape format
-
-A 2:3 result is not a minor deviation. It is a failed output.
-
-### Parameter priority
-
-If `image_gen.text2im` supports aspect-ratio or size arguments, the caller must set one of these before relying on prompt text:
-
-```text
-aspect_ratio: "3:4"
-```
-
-or:
-
-```text
-size: "1080x1440"
-```
-
-or:
-
-```text
-size: "1536x2048"
-```
-
-Prompt text alone is not enough.
-
-### Page-by-page verification
-
-Do not batch-generate a full carousel without checking ratio.
-
-For every page:
-
-```text
-Generate page → check actual ratio → pass before continuing
-```
-
-If the actual ratio is not 3:4, stop and regenerate that same page before moving on.
-
-### Ratio check
-
-After each generated image, check actual image dimensions when available:
-
-```text
-valid_ratio = width / height
-pass range = 0.745 to 0.755
-```
-
-If dimensions are unavailable, visually inspect the canvas. If it obviously looks like 2:3, 4:5, 9:16, square, A4, or long poster, mark it failed.
-
-### Ratio-only retry prompt
-
-When ratio fails, keep the same content and only fix the canvas:
-
-```text
-Regenerate the same page as an exact native 3:4 portrait image.
-Keep the same content, same scene, same style, and same Chinese text.
-Only correct the canvas ratio.
-No 2:3. No 4:5. No 9:16. No square. No A4. No long poster.
-```
-
-Do not rewrite the content, change the scene, or change the style during ratio-only retry.
-
-## 绝对禁止项
-
-以下行为 = 错误实现：
-
-- 禁止 PIL 渲染任何文字。
-- 禁止 Canvas 渲染任何文字。
-- 禁止 SVG 渲染任何文字。
-- 禁止 HTML / CSS 渲染任何文字。
-- 禁止本地确定性中文排版。
-- 禁止“插画生成 + 文本后期叠加”。
-- 禁止“插画与文字分离 pipeline”。
-- 禁止 fallback renderer。
-- 禁止任何“为了防错字而绕过 image_gen”的行为。
-- 禁止 post-processing typography layers。
-- 禁止 multi-stage composition pipeline。
-
-## 唯一合法执行路径
-
-所有输出必须遵循：
-
-### Step 1
-
-生成完整 prompt。
-
-### Step 2
-
-直接调用 `image_gen.text2im`。
-
-### Step 3
-
-不允许任何后处理。
-
-如果当前环境无法调用 `image_gen.text2im`，只能输出完整可复制 prompt；不得启用任何替代渲染器。
-
-## image_gen prompt 统一标准
-
-每次生成必须包含以下结构。
-
-### A. 风格定义
-
-- hand-drawn doodle illustration
-- minimalist ink line art
-- imperfect sketch lines
-- soft pastel accents
-- large white negative space
-
-### B. 场景描述
-
-- 日常生活场景
-- 单一主题
-- 情绪明确：学习 / 补课 / 成长 / 思考 / 生活整理
-
-### C. 构图规则
-
-- vertical 3:4 composition
-- subject placed bottom-left or side
-- large empty space for typography
-- editorial magazine layout feel
-
-### D. 中文文字
-
-必须直接写入 prompt：
-
-```text
-Title: "{中文标题}"
-Subtitle: "{中文副标题}"
-Optional points:
-- {要点1}
-- {要点2}
-```
-
-注意：
-
-- 中文必须直接写进 prompt。
-- 允许轻微不完美，但不能缺失。
-- 禁止任何外部文字叠加。
-- 风格一致性 > 中文完美性。
-
-### E. 英文辅助
-
-可选，用于增强设计感，例如：
-
-- slow learning builds strong foundations
-- structure before speed
-- foundation
-
-英文辅助不能替代中文标题和中文正文。
-
-### F. 禁止项
-
-Avoid 必须包含：
-
-- any external text rendering
-- post-processing typography layers
-- PIL/Canvas/SVG/HTML rendering
-- CSS text systems
-- multi-stage composition pipeline
-- fallback renderer
-
-## 标准 Prompt 模板（唯一版本）
-
-```text
-STRICT EXACT 3:4 PORTRAIT IMAGE ONLY.
-Create one complete image on a native 3:4 vertical canvas.
-Target canvas: 1080×1440 Xiaohongshu-style card, or any exact 3:4 equivalent.
-Do not use 2:3, 4:5, 9:16, square, A4, landscape, or long poster format.
-
-A hand-drawn doodle editorial illustration.
-
-Scene: {主题}
-Style: minimalist ink doodle, imperfect sketch lines, soft pastel accents, large white negative space.
-
-Composition: exact 3:4 portrait card, subject placed bottom-left or side, with large empty space reserved for text.
-
-Chinese text integrated into image:
-Title: "{标题}"
-Subtitle: "{副标题}"
-Optional points:
-- {要点1}
-- {要点2}
-
-Mood: calm, warm, educational, reflective.
-
-Avoid:
-- 2:3 aspect ratio
-- 4:5 aspect ratio
-- 9:16 aspect ratio
-- square image
-- A4 page
-- long poster format
-- any external text rendering
-- post-processing typography layers
-- PIL/Canvas/SVG/HTML rendering
-- CSS text systems
-- multi-stage composition pipeline
-- fallback renderer
-```
-
-## 每页输出格式
-
-每一页必须输出：
-
-A. 风格定义  
-B. 场景描述  
-C. 构图规则  
-D. 中文文字：Title / Subtitle / Optional points  
-E. 英文辅助，可选  
-F. `image_gen.text2im` prompt  
-G. 执行锁自检
-
-## 系统验证标准
-
-生成结果必须满足：
-
-- 是完整插画卡片。
-- 中文出现在画面中。
-- 没有信息图 / PPT 感。
-- 没有程序绘制感。
-- 没有文字后期叠加。
-- 有留白与杂志感构图。
-- 风格统一。
-
-## 执行锁自检
-
-每次输出最后必须包含：
-
-```text
-【Execution Lock 自检】
-- 是否只使用 image_gen.text2im：是
-- 是否单次完整生成：是
-- 是否实际比例为 3:4：是
-- 是否不是 2:3 / 4:5 / 9:16：是
-- 是否无 fallback renderer：是
-- 是否无本地画字：是
-- 是否无 PIL / Canvas / SVG / HTML / CSS 文字渲染：是
-- 是否无插画与文字分离 pipeline：是
-- 是否无后处理叠字：是
-- 是否没有为了修正中文而绕过 image_gen：是
-- 是否插画 + 中文一次生成完成：是
-- 是否风格一致性优先于中文完美性：是
-```
-
-## v0.5.0 Structure Stability Repair
-
-This is not a feature expansion. It strengthens structure safety for image_gen doodle card prompts.
-
-New priority system:
-
-```text
-结构正确性 > 可读性 > 美观 > 丰富度
-```
-
-New pipeline layers:
-
-1. anatomy constraints layer
-2. scene complexity limiter
-3. pose safety layer
-4. prompt repair loop
-5. mandatory STRUCTURE SAFETY BLOCK in final prompts
-
-Core goal: reduce three hands / three feet / disconnected limbs / hands growing from wrong places / multi-action collapse / scene overload distortion.
-
-The v0.5.0 Execution Lock remains unchanged: the only legal renderer is `image_gen.text2im`. No PIL, Canvas, SVG, HTML, fallback renderer, or post-processing typography layer is allowed.
-
-## 🔴 STRUCTURE SAFETY BLOCK（必须自动插入）
-
-```text
-STRUCTURE SAFETY BLOCK:
-- Structure priority: 结构正确性 > 可读性 > 美观 > 丰富度.
-- Use one main character / 每个画面默认仅 1 个主角色.
-- The character must have 2只手 / exactly two hands.
-- The character must have 2只脚 / exactly two feet.
-- all limbs clearly connected / 所有肢体必须明确连接身体.
-- No 第三只手, no 隐藏手, no 从桌子/衣服/墙里伸出的手.
-- 一个角色只能有一个主动作 / one simple main action only.
-- 每个角色最多交互 1~2 个物体; extra objects become background props.
-- scene complexity limiter: 单画面最多 1 个主场景; 静态物体最多 6~12 个; 信息 > 5 个要点必须视觉分组或拆卡片.
-- pose safety: prefer 坐姿, 站立侧身, 轻微伸手, 静态动作.
-- Avoid 大幅扭转身体, 双臂交叉复杂动作, 多方向同时动作, 高动态姿态.
-- prompt repair loop: 删除非必要物体 → 降低动作复杂度 → 将双手动作改为单手 → 改为坐姿/静态姿态 → 减少场景元素 → 强制重新生成 prompt.
-- Do not use occlusion to hide anatomy errors; 宁可简化，不可错误.
-```
-
-## v0.6.0 — Structure-aware Compilation System
-
-v0.6.0 = structure-aware compilation system.
-
-This is a system-level refactor: rule-based prompt system → compiler-based system.
-
-It is a compilation system, not a free prompt system:
+## 全局流程
 
 ```text
 input
+→ interpret_aspect_ratio_only
+→ encoding_guard
+→ evidence_ledger_builder
 → content_graph_builder
-→ layout_graph_compiler
-→ anatomy_guard
-→ scene_limiter
-→ prompt_composer compiler
-→ image_gen.text2im
-→ structure_scorer
-→ repair_policy_matrix if fail
-→ regenerate
-→ max_attempts = 3
+→ auto_page_planner
+→ page_content_allocator
+→ claim_binding_validator
+→ content_fidelity_guard
+→ viewpoint_visibility_guard
+→ series_style_manifest
+→ output_file_namer.plan
+→ runtime_preflight
+→ sequential_generation_controller
+→ prompt_composer(current page)
+→ $imagegen(current page)
+→ actual_pixel_ratio_gate
+→ series_consistency_gate
+→ progress_checkpoint
+→ repeat next numeric page
+→ output_file_namer.verify
+→ final_revalidation
+→ finalize_series_files
 ```
 
-Why structure scoring is needed:
+不得绕过严格顺序、实际像素比例校验、系列一致性或最终重新验图。
 
-- It gives anatomy, action, scene, and interaction risk a measurable score.
-- It prevents rich but broken scenes from passing as acceptable.
-- It triggers repair before repeated generation.
+## 1. 内容解析与事实保真
 
-Why layout graph is core:
+处理健康、科学、法律、金融或带数据内容时，读取：
 
-- It limits the image to one focal point.
-- It controls props, action, character, and empty space before the prompt is written.
-- It prevents every content point from becoming a drawn object.
+- [证据台账](core/evidence_ledger_builder.md)
+- [事实保真规则](references/factual-content-rules.md)
+- [证据绑定示例](references/evidence-binding-examples.md)
+- [内容保真守卫](core/content_fidelity_guard.md)
 
-Why repair loop is needed:
+每个数字保留数字、单位、时间窗口、人群、比较组、结果和原句来源。不得跨研究拼接，不得把相关性改写成因果。
 
-- It turns failures into deterministic simplification steps.
-- Level 1 compresses and removes decoration.
-- Level 2 repairs structure.
-- Level 3 safely downgrades to title + single character + 3 points.
+## 2. 自动分页
 
-The legal renderer remains unchanged: only `image_gen.text2im` is allowed. 3:4 Aspect Ratio Lock remains active.
+读取：
 
-## v0.6.1 — Execution-Controlled System
+- [自动分页器](core/auto_page_planner.md)
+- [分页规则](references/page-count-rules.md)
+- [页面内容分配器](core/page_content_allocator.md)
 
-This is NOT a prompt system.
-This is a controlled visual compilation system.
+默认 `P01=cover`，`P02...Pn=content`。只有用户明确指定页数时才锁定总页数。
 
-v0.6.1 architecture adds:
+## 3. 文字、图标与图表一致性
 
-- execution controller
-- state machine
-- hard gate system
-- layout → prompt mapping
-- scoring system as decision system
-- repair loop controlled by structure_score
+生成前读取：
 
-The system is upgraded from compiler → controlled compiler.
+- [系列样式清单](core/series_style_manifest.md)
+- [系列样式模板](templates/series-style-manifest-template.md)
+- [文字一致性规则](references/typography-consistency-rules.md)
+- [图标一致性规则](references/icon-consistency-rules.md)
+- [图表一致性规则](references/chart-consistency-rules.md)
+- [统一画风](styles/chinese-doodle-editorial-style-lock.md)
 
-### Why execution controller is necessary
+冻结一个 `verbatim_style_block`，逐页原样复制。整组最多一个中文字形体系、三个文字层级、一个数字与标点体系、一套图标语法和一套图表语法。
 
-The execution_controller is the central scheduler. It controls content_graph → layout_graph, layout_graph → prompt, prompt → image_gen, scorer decisions, repair, and downgrade.
+## 4. 严格顺序与断点续跑
 
-### Why scorer decides flow
+读取：
 
-`structure_score` is no longer a passive report. It controls execution:
+- [严格顺序控制器](core/sequential_generation_controller.md)
+- [超时恢复控制器](core/timeout_recovery_controller.md)
+- [进度清单模板](templates/series-progress-manifest-template.md)
+- [超时紧凑重试模板](templates/compact-timeout-retry-prompt-template.md)
 
 ```text
-score >= 85 → allow image_gen
-70–84 → repair once
-50–69 → layout downgrade
-<50 → full simplification
+generation_order = delivery_order = P01,P02,P03,...Pn
 ```
 
-### Why layout drives prompt
+- 第一张必须是封面。
+- 当前页未通过，不启动下一页。
+- 禁止并行生成多页。
+- 每页通过后立即写入断点清单。
+- 恢复时从第一张未完成页继续。
+- 进度必须落盘为原子 JSON 清单。
+- 每次新会话先恢复 stale `WAITING_IMAGEGEN` 状态。
 
-The layout_graph is the prompt structure controller. `layout_prompt_mapping` maps:
+## 5. 运行前预检
+
+读取：
+
+- [图像后端契约](references/native-image-backend-contract.md)
+- [3:4 比例锁](references/aspect-ratio-lock.md)
+
+运行：
+
+```bash
+python scripts/runtime_preflight.py \
+  --expected-version v0.8.10 \
+  --requested-ratio 3:4
+```
+
+预检必须直接选择 Codex `$imagegen`，并明确：
+
+- `fixed_pixel_size_required = false`
+- `requires_api_key = false`
+- 验收依据是返回文件的真实宽高比，而不是某组固定像素。
+
+## 6. 提示词与 `$imagegen` 调用
+
+读取：
+
+- [视角可见性守卫](core/viewpoint_visibility_guard.md)
+- [布局图编译器](core/layout_graph_compiler.md)
+- [提示词编译器](core/prompt_composer.md)
+- [标准提示词模板](templates/image-gen-card-prompt-template.md)
+- [内置 imagegen 契约](references/image-gen-text2im-contract.md)
+
+正式图片必须使用 Codex 自带 `$imagegen`。提示词首段和末段都写清：
 
 ```text
-title_scene_bullets → template_A
-single_scene_editorial → template_B
-list_scene_hybrid → template_C
-title_object_ring → template_D
+画布必须是原生 3:4 竖版，不是 2:3、4:5、9:16、A4 或长海报；不要求固定像素尺寸。
 ```
 
-### Why state machine is necessary
+如果 `$imagegen` 实际暴露 `aspect_ratio`，传入 `3:4`；如果只接受 prompt，则不得虚构 `size`、`width` 或 `height` 参数。生成后读取真实像素硬校验。
 
-The state_machine prevents direct, uncontrolled image generation and forces every call through INIT → PARSE_CONTENT → BUILD_CONTENT_GRAPH → BUILD_LAYOUT_GRAPH → PROMPT_COMPOSE → IMAGE_GEN_CALL → SCORE → DECIDE.
+## 7. 实际像素比例硬门
 
-### Final system target
+读取：
+
+- [比例硬门](core/aspect_ratio_gate.md)
+- [最终验收规则](references/validation-rules.md)
+
+```bash
+python scripts/validate_native_3x4.py GENERATED_IMAGE.png \
+  --requested-ratio 3:4 \
+  --log-jsonl generation-log.jsonl
+```
+
+唯一比例通过条件：
 
 ```text
-structure_score → controls execution
-execution_controller → controls pipeline
-layout_graph → controls prompt
-state_machine → controls flow
-repair_loop → controls recovery
-image_gen → only allowed under SAFE state
+abs(actual_width / actual_height - 0.75) <= 0.001
 ```
 
-## v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
+不校验固定像素，不比较“请求宽高”和“实际宽高”。若不通过：删除或隔离本次结果，使用同一文字、同一样式锁和同一文件名从头重生成当前页。不得修图。
 
-v0.6.2 introduces:
+## 8. 文件名预规划
 
-- runtime simulation layer
-- encoding safety layer
-- execution trace system
-
-The system is now observable, simulation-driven, and execution-traceable.
-
-It upgrades the controlled compiler into a production-grade deterministic AI pipeline.
-
-### Runtime simulation layer
-
-Before real `image_gen.text2im`, the system runs:
+读取 [文件命名器](core/output_file_namer.md)。生成前完成唯一文件名规划：
 
 ```text
-input → content_graph → layout_graph → prompt_composer → fake_image_gen_simulation → structure_scorer
+01-cover-{topic-slug}.png
+02-content-{topic-slug}.png
+03-content-{topic-slug}.png
+04-action-{topic-slug}.png
 ```
 
-If simulated_score < 85, do not call image_gen and force repair loop.
+重试与续跑不得改变文件名。
 
-### Encoding safety layer
+## 9. 系列一致性验收
 
-The encoding_guard enforces UTF-8 across SKILL.md, README.md, metadata, prompts, and Chinese text. If encoding_guard FAIL, stop system and block installation.
+读取：
 
-### Execution trace system
+- [系列一致性门](core/series_consistency_gate.md)
+- [整组一致性规则](references/group-consistency-rules.md)
 
-Each generation must record trace fields: input, content_graph, layout_graph, prompt_version, scorer_before, scorer_after, repair_triggered, downgrade_triggered, image_gen_called, final_state.
+明显字体、数字、图标、图表、纸色、线宽或组件漂移均判失败，只重新生成当前页。
 
-### Final target
+## 10. 最终重新验图与打包
 
-```text
-simulation before generation
-encoding safety before pipeline
-execution trace after generation
-scorer controls execution
-controller is single source of truth
-image_gen only allowed if ALL checks pass
+```bash
+python scripts/finalize_series_files.py \
+  --manifest SERIES_PROGRESS.json \
+  --source-dir GENERATED_IMAGES \
+  --output-dir FINAL_IMAGES \
+  --validation-mode publish-3x4 \
+  --zip FINAL_SERIES.zip
 ```
+
+最终器必须重新打开每张源图和目标图，重新读取宽高、比例和 SHA-256；不得相信旧的 `ratio_passed=true`。最终器只复制或移动文件及写 ZIP，不改变像素。
+
+## 11. 超时、会话重连与断点恢复
+
+`request timed out` 表示本次 `$imagegen` 调用没有在工具或会话期限内返回图片。没有运行时证据时不得武断归因。
+
+执行硬规则：
+
+- 调用前先用 `scripts/series_progress_controller.py begin` 原子写入 `WAITING_IMAGEGEN`。
+- 每次请求最多携带一张已通过的参考图。
+- 首次服务超时不消耗内容尝试，只重试当前页一次。
+- 同一执行窗口第二次超时后写入 `PAUSED_TIMEOUT` 并停止。
+- 用户说“继续”时，从磁盘读取清单，只恢复 `resume_from_page_id`。
+- 会话重连导致旧请求状态丢失时，运行 `recover --force-after-reconnect`。
+- 图片返回但比例、中文、结构或一致性失败，才消耗内容尝试；最多 3 次。
+- 当前页未 `COMPLETE` 前，下一页不得启动。
+
+首次超时后的重试使用 [紧凑超时重试模板](templates/compact-timeout-retry-prompt-template.md)，保持文字、事实、文件名和样式锁不变，只移除重复说明与非必要装饰。
+
+## 最终交付
+
+只交付事实、中文、结构、视角、真实 3:4 比例、系列一致性、生成顺序和文件顺序全部通过的图片。最终文件可以是任何原生像素尺寸，只要真实比例为 3:4。绝不把比例要求升级成固定像素要求。

@@ -65,3 +65,30 @@ The layout_graph must output and control:
 
 The layout_graph selects the prompt structure through `layout_prompt_mapping.md`.
 The prompt_composer must follow the layout_graph and selected template.
+
+## v0.8.10 Viewpoint Visibility Integration
+
+`layout_graph_compiler` must call `viewpoint_visibility_guard` after scene_structure.props are known and before prompt_composer.
+
+The layout graph must include:
+
+```json
+{
+  "prop_inventory": [],
+  "character_gaze_direction": "toward_prop | toward_viewer | down | side | unclear",
+  "viewer_camera_angle": "front | side | three_quarter | over_shoulder | top_down | unclear",
+  "prop_visibility_plan": [],
+  "viewpoint_visibility_status": "PASS | WARNING | FAIL"
+}
+```
+
+Compiler rules:
+
+- Every paper, phone, tablet, book, notebook, screen, sign, card, manual, or text-bearing prop must receive a prop_role.
+- If the character is reading the prop and the prop faces the character, classify it as `self_reading`.
+- If a prop is explicitly shown to the viewer, classify it as `viewer_presentation`.
+- Decorative context props become `background_prop`.
+- Self-reading props must not be assigned clear_readable full body text.
+- Required page information must stay in `approved_page_text` unless the prop is viewer_presentation.
+
+If `viewpoint_visibility_status = FAIL`, the layout graph is not safe for prompt composition and must be repaired.

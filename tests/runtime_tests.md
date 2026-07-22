@@ -1,18 +1,11 @@
-# Runtime Tests — v0.6.2
+# Runtime Tests v0.8.10
 
-These tests validate the production-grade deterministic AI pipeline.
-
-| Test | Expected behavior |
+| Case | Expected |
 |---|---|
-| encoding failure case | encoding_guard FAIL → BLOCK ALL → BLOCK installation → REQUIRE repair |
-| simulation failure case | runtime_simulator FAIL → BLOCK image_gen → FORCE repair loop |
-| layout overload case | simulated_score < 85 → DO NOT CALL image_gen → reduce props / split layout |
-| multi-hand risk case | predicted_issues includes multi-hand risk → BLOCK image_gen → anatomy repair |
-| scoring instability case | large scorer delta → repair_policy_matrix uses simulation result + execution trace + scorer delta |
-
-## Required assertions
-
-- image_gen_called must be false for failed simulation.
-- final_state must be SAFE or FAIL.
-- execution_trace must record scorer_before and scorer_after.
-- max_attempts remains 3.
+| 1086x1448 | PASS ratio |
+| 1080x1440 | PASS ratio |
+| 1536x2048 | PASS ratio, not fixed-size |
+| 768x1024 | PASS ratio |
+| 1024x1536 | FAIL ratio |
+| no OPENAI_API_KEY | PASS preflight |
+| user says 1536x2048 ratio | interpret as 3:4 ratio only |

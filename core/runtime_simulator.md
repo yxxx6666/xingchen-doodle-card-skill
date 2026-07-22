@@ -1,30 +1,34 @@
-# runtime_simulator — v0.6.2 Runtime Simulation System
+# runtime_simulator — v0.8.10
 
-Purpose: run simulated execution validation before any real `image_gen.text2im` call.
-
-This makes the system simulation-driven and prevents unsafe prompts from reaching image generation.
+Purpose: predict failures before any real image-model call.
 
 ## Simulation flow
 
 ```text
-input
+evidence_ledger
 → content_graph
-→ layout_graph
-→ prompt_composer
-→ fake_image_gen_simulation
-→ structure_scorer
+→ auto_page_planner
+→ page_content_allocator
+→ claim_binding_validator
+→ content_fidelity_guard
+→ viewpoint_visibility_guard
+→ output_file_namer.plan
+→ layout_graph_compiler
+→ prompt_composer simulation
+→ structure and risk prediction
 ```
 
-## Simulation goals
+## Required predictions
 
-Validate without calling image_gen:
-
-- 是否会出现三只手
-- layout 是否过载
-- prompt 是否安全
-- structure_score 是否达标
-- whether props or actions exceed safe limits
-- whether image_gen text remains parseable
+- missing or unbound evidence;
+- causal overclaim or misleading cover claim;
+- insufficient or excessive page count;
+- prompt count mismatch;
+- missing, duplicated or discontinuous filenames;
+- self-reading props with readable viewer-facing text;
+- anatomy, occlusion and overloaded-scene risk;
+- critical Chinese text density risk;
+- unsupported aspect-ratio parameter claims.
 
 ## Output
 
@@ -32,29 +36,29 @@ Validate without calling image_gen:
 {
   "simulated_score": 0,
   "risk_prediction": "SAFE | WARNING | FAIL",
+  "content_risk_prediction": "SAFE | WARNING | FAIL",
+  "page_count_risk_prediction": "SAFE | WARNING | FAIL",
+  "filename_risk_prediction": "SAFE | WARNING | FAIL",
+  "viewpoint_risk_prediction": "SAFE | WARNING | FAIL",
+  "ratio_capability_risk_prediction": "SAFE | WARNING | FAIL",
   "predicted_issues": [],
   "should_execute": false
 }
 ```
 
-## Mandatory rule
+## Hard rules
 
 ```text
-IF simulated_score < 85:
-  DO NOT CALL image_gen
-  FORCE repair loop
+IF simulated_score < 85: BLOCK image_gen
+IF content_risk_prediction = FAIL: BLOCK image_gen
+IF page_count_risk_prediction = FAIL: RE-RUN auto_page_planner
+IF filename_risk_prediction = FAIL: RE-RUN output_file_namer.plan
+IF viewpoint_risk_prediction = FAIL: REPAIR prop_visibility_plan
+IF ratio_capability_risk_prediction = FAIL: REMOVE unsupported tool arguments
 ```
 
-## Simulation failure
+Simulation does not call an image model and does not pretend that a generated image was validated.
 
-A runtime_simulator FAIL means:
+## v0.8.10 backend simulation
 
-- image_gen is blocked
-- execution_controller must enter repair loop
-- execution_trace must record `image_gen_called: false`
-
-## Production target
-
-```text
-simulation before generation
-```
+Simulation must verify version, backend capability source, explicit requested size and absence of pixel post-processing before dispatch. It cannot treat prompt text or a static test schema as backend proof.

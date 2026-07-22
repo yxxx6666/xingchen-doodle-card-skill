@@ -1,33 +1,21 @@
-# Group Consistency Rules
+# Group Consistency Rules v0.8.10
 
-## Goal
+Across one series, lock:
 
-The cover and content pages should look like one coherent image series.
+- actual 3:4 portrait dimensions;
+- one Chinese visual family and three text levels;
+- one numeral, punctuation and spacing system;
+- one soft-black outline weight and rounded terminal style;
+- one pastel palette and warm paper background;
+- one icon perspective, fill density and detail band;
+- one chart axis, series-color, arrowhead, marker and label system;
+- one callout, highlight, divider and corner-radius library;
+- one safe-margin and title-zone rhythm;
+- canonical descriptions for repeated objects and charts;
+- continuous ordered filenames and ZIP member order.
 
-## Keep consistent
+Select a representative content page as the anchor when possible. Generate and approve it first, then use it as a style reference for every other page when supported.
 
-- same 3:4 ratio
-- same white/off-white background
-- same black ink doodle linework
-- same soft pastel accent palette
-- same young Chinese woman character direction
-- same light editorial illustration feeling
-- same negative-space-first composition
-- same image_gen-only text integration rule
+Consistency does not mean identical layouts or the same character on every page. It means the pages look drawn and lettered by the same illustrator with the same pen and component library.
 
-## Allow variation
-
-- action anchor can change
-- props can change
-- text placement can change
-- composition pattern can change within C01-C08
-- English note can change or be omitted
-
-## Do not vary
-
-- do not switch to anime
-- do not switch to watercolor
-- do not switch to cinematic poster
-- do not switch to 3D
-- do not switch to dense infographic
-- do not switch to local layout or rendered typography
+The following are failures: a second handwriting family, brush/marker switching, visibly different numeral shapes, vector/sticker icons mixed with doodles, recurring icons changing silhouette, chart grammar changing, background paper changing, or component shapes being reinvented page by page.

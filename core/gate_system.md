@@ -1,43 +1,39 @@
-# gate_system — v0.6.1 Hard Gate System
+# gate_system — v0.8.10
 
-The gate_system defines non-negotiable blocks before generation.
-
-## Hard gates
+## Pre-generation gate order
 
 ```text
-structure_score < 85 → BLOCK image_gen
-structure_score < 70 → FORCE repair
-structure_score < 50 → FORCE simplification
+encoding
+→ evidence
+→ page planning
+→ page allocation
+→ claim binding
+→ content fidelity
+→ viewpoint visibility
+→ filename planning
+→ series style freeze
+→ runtime version/backend preflight
+→ explicit size plan
+→ prompt composition
+→ native image backend authorization
 ```
 
-## Gate table
-
-| Condition | Gate action | Next state |
-|---|---|---|
-| score >= 85 and SAFE | allow image_gen | IMAGE_GEN_CALL / OUTPUT |
-| 70 <= score <= 84 | BLOCK image_gen, repair once | REPAIR |
-| 50 <= score <= 69 | BLOCK image_gen, FORCE layout downgrade | DOWNGRADE |
-| score < 50 | BLOCK image_gen, FORCE content simplification | DOWNGRADE |
-
-## Image generation rule
-
-`image_gen.text2im` is only allowed under SAFE state.
-
-No fallback renderer is allowed. No local rendering system is allowed.
-
-## v0.6.2 Production hard gates
+## Hard blocks
 
 ```text
-IF encoding_guard FAIL:
-  BLOCK ALL
-
-IF runtime_simulator FAIL:
-  BLOCK image_gen
-
-IF structure_score < 85:
-  BLOCK image_gen
+IF skill_version != v0.8.10: BLOCK
+IF current_page != first_incomplete_page: BLOCK
+IF any padding/crop/resize/compositing path is enabled: BLOCK
+IF content/viewpoint/filename/style checks fail: BLOCK
 ```
 
-The gate_system must evaluate encoding safety before pipeline execution and runtime simulation before image generation.
+## Post-generation gates
 
-`image_gen.text2im` is allowed only if ALL checks pass.
+```text
+IF publish mode ratio != 0.75, or strict mode exact dimensions fail: DISCARD AND REGENERATE SAME PAGE
+IF ratio != 0.75 ± 0.001: DISCARD AND REGENERATE SAME PAGE
+IF Chinese text/facts/structure/style fail: REGENERATE SAME PAGE
+IF SHA-256 missing: BLOCK page completion
+IF final independent revalidation fails: BLOCK package
+IF numeric filenames are discontinuous: BLOCK package
+```

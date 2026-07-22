@@ -1,4 +1,4 @@
-# encoding_guard — v0.6.2 Encoding and Text Integrity Guard
+# encoding_guard — v0.8.10 Encoding and Text Integrity Guard
 
 Purpose: prevent Chinese mojibake, metadata corruption, text loss, and prompt encoding error.
 

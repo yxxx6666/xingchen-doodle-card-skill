@@ -52,7 +52,7 @@ input
 → anatomy_guard
 → scene_limiter
 → prompt_composer compiler
-→ image_gen.text2im
+→ selected native image mode/backend
 → structure_scorer
 → repair_policy_matrix if fail
 → regenerate
@@ -78,7 +78,7 @@ Why repair loop is needed:
 - Level 2 repairs structure.
 - Level 3 safely downgrades to title + single character + 3 points.
 
-The legal renderer remains unchanged: only `image_gen.text2im` is allowed. 3:4 Aspect Ratio Lock remains active.
+The legal visual generator is Codex `$imagegen` in publish mode, or a verified exact-size backend in strict mode. Native 3:4 validation remains active.
 
 ## v0.6.1 — Execution-Controlled System
 
@@ -137,9 +137,9 @@ repair_loop → controls recovery
 image_gen → only allowed under SAFE state
 ```
 
-## v0.6.2 — Production-grade Observable AI Visual Compilation Pipeline
+## v0.8.0 — Production-grade Observable AI Visual Compilation Pipeline
 
-v0.6.2 introduces:
+v0.8.0 introduces:
 
 - runtime simulation layer
 - encoding safety layer

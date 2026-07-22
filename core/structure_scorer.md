@@ -126,7 +126,7 @@ The scorer output must be consumed by execution_controller and gate_system.
 structure_score → controls execution
 ```
 
-## v0.6.2 Simulation-aware scoring
+## v0.8.10 Simulation-aware scoring
 
 The scorer must compare pre-generation simulation and post-generation evaluation.
 
@@ -153,3 +153,41 @@ scorer controls execution
 ## simulation-aware scoring
 
 Required fields: pre_gen_score, post_gen_score, delta.
+
+## v0.8.10 Viewpoint realism scoring
+
+The scorer now includes viewpoint visibility and readable-surface perspective as a structural realism dimension.
+
+### E. Viewpoint Visibility（20）
+
+Checks:
+
+- character gaze direction matches prop orientation
+- viewer camera angle matches readable surface visibility
+- self_reading props do not show full readable body text
+- viewer_presentation props are explicitly front-facing
+- background props do not carry required facts
+
+Score:
+
+```text
+viewpoint_visibility: 0-20
+```
+
+Hard failure:
+
+```text
+IF self_reading prop shows clear_readable full body text to viewer:
+  risk_level = FAIL
+  repair_required = true
+```
+
+Updated priority:
+
+```text
+结构正确性 > 视角真实性 > 可读性 > 美观 > 丰富度
+```
+
+### v0.8.10 viewpoint_visibility_guard consumption
+
+The scorer consumes `viewpoint_visibility_guard` and `prop_visibility_plan` for `self_reading`, `viewer_presentation`, and `background_prop` cases. The viewpoint_visibility subscore is reduced when any prop role conflicts with character gaze, prop orientation, or viewer camera angle.
