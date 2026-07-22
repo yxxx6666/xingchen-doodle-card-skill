@@ -1,10 +1,22 @@
-# 涂鸦卡片｜xingchen-doodle-card-skill
+# 涂鸦插画 · xingchen-doodle-card-skill
 
-把任意内容转成 3:4 竖版「手绘涂鸦插画」提示词的 AI Skill。
+把文章、观点、流程、知识和复杂信息，变成一组**手绘中文涂鸦插画卡片**。
 
-适合用于小红书封面、知识卡片、公众号配图、视频号封面、内容视觉化笔记和个人图片风格工作流。
+**3:4 竖版｜中文信息卡片｜手绘涂鸦｜自动分页｜内容保真｜AI Agent Skill**
 
 > **当前版本：v0.8.10** ｜ [更新日志](./CHANGELOG.md) ｜ [发布说明](https://github.com/yxxx6666/xingchen-doodle-card-skill/releases/tag/v0.8.10)
+
+`xingchen-doodle-card-skill` 用于指导 AI Agent 把长文、科普、方法论、清单、课程笔记、产品介绍和故事内容，转成可直接发布的多页中文涂鸦插画。
+
+它不是一条通用生图 Prompt，也不是把大段文字塞进图片里的海报模板。
+
+它的核心目标是：
+
+> **先理解内容的结构，再把内容拆成一页页有重点、有顺序、有阅读节奏的涂鸦卡片。**
+
+一句话：
+
+> **让 AI 不只是"生成几张图"，而是把一段内容做成一套能看懂、能滑完、能传播的图文卡片。**
 
 ---
 
@@ -25,185 +37,231 @@
 
 ## Installation
 
-一行代码安装：
+一键安装：
 
     git clone https://github.com/yxxx6666/xingchen-doodle-card-skill.git
 
----
-
-## Overview
-
-**涂鸦卡片**不是一个普通提示词模板，而是一套面向中文内容创作的 AI 视觉编译流程。
-
-它可以把主题、文案、观点、知识点或内容结构，转化为适合 AI 生图工具使用的中文涂鸦卡片提示词。
-
-它的目标是：
-
-- 把抽象内容转成清晰的视觉结构
-- 固定输出 3:4 竖版卡片方向
-- 保持简洁、可爱、手绘、涂鸦、编辑插画风格
-- 提升中文标题和文字信息的可读性
-- 降低画面过载、结构混乱、文字乱码和风格漂移的风险
-- 让图片提示词更稳定、更清晰、更容易复用
+将克隆得到的目录放入你的 AI Agent Skill 路径即可使用。
 
 ---
 
-## What It Does
+## 这个仓库解决什么问题
 
-涂鸦卡片可以帮助你快速生成适合社交媒体使用的图片提示词。
+很多图文内容的难点，不在于"能不能生成图片"，而在于：
 
-你只需要输入一个主题，例如：
+- 长内容应该拆成几页？
+- 每一页究竟讲什么？
+- 标题、结论、数字、例子怎样分配才不拥挤？
+- 哪些信息必须保留，哪些可以压缩？
+- 怎样让多张图既统一，又不重复？
+- 人物拿着纸、手机或书本时，图上的文字是否符合真实视角？
+- 最后导出的多张图片，是否能按正确顺序直接发布？
 
-    普通人为什么越来越容易决策疲劳？
+`xingchen-doodle-card-skill` 将这些问题变成一套可复用的生成流程：
 
-它会帮你整理出：
-
-- 画面主题
-- 中文标题
-- 主体人物或物体
-- 背景氛围
-- 涂鸦元素
-- 构图方式
-- 色彩风格
-- 文字排版要求
-- 负面限制词
-
-最终形成一段可以直接用于 AI 生图工具的提示词。
-
----
-
-## Features
-
-- 3:4 竖版卡片比例
-- 中文涂鸦编辑插画风格
-- 简洁可爱的视觉表达
-- 适合中文标题和中文内容
-- 自动拆解内容重点
-- 自动组织画面主体和辅助元素
-- 控制信息密度，避免画面太乱
-- 强调标题醒目和文字可读性
-- 适合小红书、公众号、视频号等内容场景
-- 可用于个人图片风格库和 Skill 分享
+1. 识别内容类型、篇幅与信息密度
+2. 自动规划合理页数
+3. 为每一页分配唯一的信息重点
+4. 生成统一的中文手绘涂鸦卡片
+5. 检查信息遗漏、文字可读性、人物视角与视觉结构
+6. 按 `01`、`02`、`03` 的顺序输出图片文件
 
 ---
 
-## Use Cases
+## 它适合谁
 
-适合以下场景：
+特别适合：
 
-- 小红书封面图
-- 小红书图文卡片
-- 公众号文章配图
-- 视频号封面提示词
-- 知识科普卡片
-- 内容选题视觉化
-- AI 图片风格案例
-- 提示词模板沉淀
-- 个人 Skill 分享
-- 中文手绘插画工作流
+- 写公众号、小红书、Notion 笔记、知识文章的人
+- 需要把长文转成图文卡片的人
+- 做 AI、科技、商业、健康、学习方法、个人成长等知识内容的人
+- 想把复杂概念讲清楚，而不是只做"好看封面"的人
+- 希望稳定产出统一视觉风格图文的人
+- 用 AI Agent 建立内容生产工作流的人
 
----
+不适合：
 
-## Visual Style
-
-默认视觉方向：
-
-- 3:4 竖版构图
-- 简洁可爱的手绘涂鸦风格
-- 柔和、干净、不杂乱的背景
-- 醒目的中文标题
-- 清晰的信息分区
-- 轻量装饰元素
-- 明确主体画面
-- 温馨、可爱、治愈、清爽
-- 适合社交媒体传播
-- 避免文字过多
-- 避免画面拥挤
-- 避免 AI 感过重
+- 只需要单张商业海报或品牌 KV 的场景
+- 需要高保真写实插画、摄影风格图片的场景
+- 需要复杂可编辑矢量图、专业架构图或精确数据图表的场景
+- 想把整篇文章、长段文字、完整课程内容塞进一张图的人
+- 只想做一张没有内容结构的"氛围感配图"的场景
 
 ---
 
-## Example Input
+## 它会产出什么
 
-    主题：为什么很多人不是懒，而是被选择耗尽了？
-    平台：小红书
-    用途：封面图
-    风格：温馨可爱、手绘涂鸦、轻松治愈
-    文字：每天最累的，不是做事，而是重新决定
-    比例：3:4
+默认输出：
 
----
+- 一组 **3:4 竖版中文涂鸦卡片**
+- 自动规划后的页数建议
+- 每页的主题、核心结论与内容分配
+- 封面页与内容页的完整结构
+- 统一视觉风格的单页生成提示词
+- 按顺序命名的最终图片文件，例如：
 
-## Example Prompt Output
+```
+01-cover-{topic}.png
+02-content-{topic}.png
+03-content-{topic}.png
+04-action-{topic}.png
+```
 
-    Create a 3:4 vertical social media cover card in a cute hand-drawn doodle editorial illustration style.
+默认不输出：
 
-    Main theme: decision fatigue in daily life.
-
-    Visual composition:
-    A young person sitting at a small desk, surrounded by simple floating doodle icons such as calendar, food choices, phone notifications, shopping list, and question marks. The character looks slightly tired but gentle, not dramatic.
-
-    Layout:
-    Clean vertical card layout, large Chinese title at the top, main illustration in the center, small supporting doodle elements around the character, soft background with enough whitespace.
-
-    Chinese title text:
-    「每天最累的，不是做事，而是重新决定」
-
-    Style:
-    Warm, soft, cute, simple, hand-drawn, editorial doodle illustration, clean lines, pastel colors, light beige background, friendly visual atmosphere.
-
-    Requirements:
-    Clear Chinese typography, readable title, no extra body text, no cluttered layout, no realistic photo style, no 3D rendering, no dark cyberpunk style, no messy background.
+- PPTX、Keynote 或 PDF 演示文稿
+- 可编辑 SVG、HTML 或 Canvas 页面
+- 复杂商业海报与品牌主视觉
+- 一页塞满正文的大段文字信息图
+- 没有内容逻辑、只靠装饰元素拼出来的卡片组
 
 ---
 
-## Design Principles
+## 核心能力
 
-这个 Skill 遵循以下原则：
+### 1. 自动分页，而不是固定两页
 
-- 内容优先，而不是装饰优先
-- 结构清晰，而不是元素堆叠
-- 中文可读，而不是只追求画面感
-- 稳定生成，而不是随机碰运气
-- 简洁、可爱、清楚、好用
-- 适合普通创作者直接复用
+"封面页 + 内容页"不是固定做两张图。
+
+Skill 会根据文章长度、研究数量、数字密度和逻辑复杂度，自动决定合理页数。普通内容可能是 3–5 页，长文科普、方法论或多数据内容通常会规划为 5–6 页或更多。
+
+页数由内容决定，不由模板决定。
+
+### 2. 内容分配，而不是机械切段
+
+每一页都需要有一个明确任务：
+
+- 抛出问题
+- 给出核心判断
+- 拆解关键概念
+- 展示流程或方法
+- 用案例、数字或比喻解释
+- 做结论收束
+
+Skill 会避免把文章按字数硬切，尽量让每一页都形成一个完整阅读动作。
+
+### 3. 内容保真，而不是为了好看删掉重点
+
+重要结论、关键数字、逻辑关系和事实边界不会因为版面限制被随意省略。
+
+它会优先保证：
+
+- 核心判断没有丢失
+- 关键数据没有被改写
+- 因果关系没有被画反
+- 多页之间的逻辑能连续阅读
+- 视觉装饰不抢走正文信息
+
+### 4. 中文手绘涂鸦卡片风格
+
+默认视觉语言：
+
+- 3:4 竖版卡片
+- 温馨、轻松、清晰的手绘涂鸦风格
+- 中文标题醒目、正文易读
+- 柔和但不杂乱的背景
+- 角色、道具与内容结构共同服务信息表达
+- 适合移动端滑读与社媒发布
+
+目标不是做一张复杂插画，而是让读者在几秒内知道：
+
+> **这一页想表达什么。**
+
+### 5. 视角与文字可见性校验
+
+当人物正在看纸张、手机、书本、平板或笔记本时，观众不应该从不合理的侧面视角，清楚读到道具正面的大段完整文字。
+
+Skill 会区分三类文字道具：
+
+- `self_reading`：角色自己阅读
+- `viewer_presentation`：角色面向观众展示
+- `background_prop`：作为背景或环境道具存在
+
+只有明确面向观众展示的道具，才允许出现清晰可读的正文。
+
+如果角色正在阅读，道具上的文字会保持留白、模糊符号、局部痕迹或不可读状态；真正的正文信息会放在独立信息区域中。
+
+### 6. 多页有序交付
+
+多页图片必须按阅读顺序交付。
+
+Skill 会在最终输出前统一处理文件命名，确保图片带有 `01`、`02`、`03` 等顺序前缀，避免发布或导入时发生错页。
 
 ---
 
-## Version Info
+## 推荐使用场景
 
-### v0.8.10 （当前版本，2026-07-22）
+- 一篇长文章转小红书图文
+- 公众号内容的正文配图
+- Notion 笔记转知识卡片
+- AI 工作流、方法论与流程讲解
+- 科普、健康、商业、学习类内容
+- 产品介绍、案例复盘与功能说明
+- 清单、步骤、原则、误区与行动建议
+- 课程内容、读书笔记与个人知识库整理
+
+---
+
+## 工作流程
+
+```
+输入内容
+  ↓
+识别文章主题、信息密度与核心判断
+  ↓
+自动规划推荐页数
+  ↓
+为每一页分配唯一的信息重点
+  ↓
+生成封面页与内容页结构
+  ↓
+为每页编写中文涂鸦卡片提示词
+  ↓
+逐张生成图片
+  ↓
+检查内容保真、视觉结构与道具视角
+  ↓
+按顺序命名并输出最终卡片组
+```
+
+---
+
+## 使用原则
+
+- 一页只表达一个核心意思
+- 页数必须服务内容，不要为了少做图强行合并
+- 重要结论、数字和事实边界必须保留
+- 封面负责吸引阅读，内容页负责讲清逻辑
+- 文字必须清楚、简洁、适合手机阅读
+- 人物和道具不是装饰，应当服务当前页面的信息表达
+- 多页卡片之间要有连续阅读感，而不是重复的海报拼贴
+- 人物自读的纸张、手机和书本，不应用作面向观众的正文面板
+
+---
+
+## 当前版本
+
+### v0.8.10（2026-07-22）
 
 **核心变更：**
 
-- 删除固定像素模式 `strict-size`
-- 删除 Images API 和 `OPENAI_API_KEY` 路径
-- 比例与像素完全解耦，统一验收 `abs(width/height-0.75)<=0.001`
+- 删除固定像素模式 `strict-size`，比例与像素完全解耦
+- 统一比例验收为 `abs(width/height-0.75)<=0.001`
 - 任意原生尺寸只要真实比例为 0.75 即可通过
+- 正式图片只使用 Codex 自带 `$imagegen`，不要求 `OPENAI_API_KEY`，不调用外部 Images API
 
 **新增能力：**
 
-- 顺序生成控制器（sequential_generation_controller）
-- 超时恢复控制器（timeout_recovery_controller）
-- 断点续跑与磁盘进度清单
-- 系列一致性门（series_consistency_gate）
-- 最终重新验图与打包（finalize_series_files）
-- 证据台账（evidence_ledger_builder）
-- 内容保真守卫（content_fidelity_guard）
-- 视角可见性守卫（viewpoint_visibility_guard）
-- 自动分页器（auto_page_planner）
-
-**v0.8.10 比例规则：**
-
-正式图片只使用 Codex 自带 `$imagegen`：
-
-- 不要求 `OPENAI_API_KEY`
-- 不调用外部 Images API
-- 不强制 `1536×2048`、`1080×1440` 等固定像素
-- 生成后读取真实宽高
-- 只验证 `abs(width / height - 0.75) <= 0.001`
-- 比例失败时丢弃并重生成当前页
-- 禁止补边、裁切、缩放、扩图或任何后处理
+| 能力 | 说明 |
+|------|------|
+| 顺序生成控制器 | 封面优先，逐页生成，不并行 |
+| 超时恢复控制器 | 服务超时与内容失败分离，断点续跑 |
+| 系列一致性门 | 字体、数字、图标、图表、纸色、线宽跨页一致 |
+| 最终重新验图 | 打包前重新读取每张图的真实宽高与 SHA-256 |
+| 证据台账 | 每个数字保留来源、单位、时间窗口、人群 |
+| 内容保真守卫 | 核心判断不丢失，因果关系不画反 |
+| 视角可见性守卫 | 区分自读 / 面向观众 / 背景道具三类文字道具 |
+| 自动分页器 | 根据内容长度与信息密度自动决定页数 |
 
 <details>
 <summary>查看历史版本</summary>
@@ -224,8 +282,55 @@
 
 ---
 
-## Author
+## 注意事项
 
-Created by Xingchen.
+- 图片中的中文越短，生成越稳定。
+- 一页只讲一个重点，不要把卡片做成说明书。
+- 长内容应增加页数，而不是缩小字体或压缩信息。
+- 重要数字、结论和事实边界需要在生成后复核。
+- 如果文字错字严重，优先减少文字量并重新生成。
+- 示例图用于校准风格、留白、排版和信息密度，不应直接复刻构图。
+- 图像生成后仍需检查人物结构、文字可读性、道具朝向和页序。
 
-Personal creative AI Skill for Chinese doodle editorial card generation.
+---
+
+## 仓库结构
+
+```
+.
+├── README.md               # 项目说明
+├── LICENSE                  # MIT 许可证
+├── CHANGELOG.md             # 更新日志
+├── VERSION.md               # 版本号
+├── RELEASE_REPORT.md        # 发布报告
+├── SKILL.md                 # Skill 主文件（AI Agent 读取入口）
+├── agents/
+│   └── openai.yaml          # Agent 配置
+├── core/                    # 核心模块
+│   ├── auto_page_planner.md         # 自动分页
+│   ├── page_content_allocator.md    # 内容分配
+│   ├── content_fidelity_guard.md    # 内容保真
+│   ├── viewpoint_visibility_guard.md # 视角可见性
+│   ├── output_file_namer.md         # 顺序命名
+│   ├── sequential_generation_controller.md
+│   ├── timeout_recovery_controller.md
+│   ├── series_consistency_gate.md
+│   ├── evidence_ledger_builder.md
+│   └── ...
+├── references/              # 参考规则
+├── scripts/                 # 校验与打包脚本
+├── styles/                  # 画风锁定
+├── templates/               # 提示词模板
+├── tests/                   # 回归测试
+└── examples/                # 示例图片与案例
+    ├── example-1.png ~ example-6.png
+    └── example_01_sleep.md ~ example_05_work_life.md
+```
+
+AI Agent 真正需要读取的入口是 `SKILL.md`，其余文件由 Skill 按需引用。
+
+---
+
+## License
+
+MIT License. See [LICENSE](./LICENSE).
